@@ -50,4 +50,9 @@ public class FeatureImpl implements Feature {
 	public String toString(){
 		return serialize();
 	}
+
+	@Override
+	public FeatureLevel getLevel() {
+		return l;
+	}
 }
