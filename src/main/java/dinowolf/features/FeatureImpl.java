@@ -4,17 +4,17 @@ public class FeatureImpl implements Feature {
 	private boolean t;
 	private String v;
 	private String n;
+	private FeatureLevel l;
 
-	public FeatureImpl(String name, String value, boolean tokenizable) {
+	public FeatureImpl(String name, String value, FeatureLevel level, boolean tokenizable) {
 		t = tokenizable;
 		n = name;
 		v = value;
+		l = level;
 	}
 	
-	public FeatureImpl(String name, String value) {
-		t = false;
-		n = name;
-		v = value;
+	public FeatureImpl(String name, String value, FeatureLevel level) {
+		this(name, value, level, false);
 	}
 
 	@Override

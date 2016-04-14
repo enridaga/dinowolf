@@ -1,11 +1,8 @@
 package dinowolf.features;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.taverna.scufl2.api.configurations.Configuration;
@@ -18,59 +15,91 @@ import com.fasterxml.jackson.databind.JsonNode;
 import dinowolf.annotation.FromTo;
 
 public class Features {
-	private Feature __f(String name, String value, boolean t) {
-		return new FeatureImpl(name, value, t);
+	private Feature __f(String name, String value, FeatureLevel level, boolean t) {
+		return new FeatureImpl(name, value, level, t);
 	}
 
-	private Feature __f(String name, String value) {
-		return new FeatureImpl(name, value);
+	private Feature __f(String name, String value, FeatureLevel level) {
+		return new FeatureImpl(name, value, level);
+	}
+
+	private Feature __w(String name, String value) {
+		return __f(name, value, FeatureLevel.Workflow);
+	}
+
+	private Feature __p(String name, String value) {
+		return __f(name, value, FeatureLevel.Processor);
+	}
+
+	private Feature __sp(String name, String value) {
+		return __f(name, value, FeatureLevel.SinglePort);
+	}
+
+	private Feature __pp(String name, String value) {
+		return __f(name, value, FeatureLevel.FromToPorts);
+	}
+
+	private Feature __w(String name, String value, boolean t) {
+		return __f(name, value, FeatureLevel.Workflow, t);
+	}
+
+	private Feature __p(String name, String value, boolean t) {
+		return __f(name, value, FeatureLevel.Processor, t);
+	}
+
+	private Feature __sp(String name, String value, boolean t) {
+		return __f(name, value, FeatureLevel.SinglePort, t);
+	}
+
+	private Feature __pp(String name, String value, boolean t) {
+		return __f(name, value, FeatureLevel.FromToPorts, t);
 	}
 
 	public Feature ProcessorName(String value) {
-		return __f("ProcessorName", value, true);
+		return __p("ProcessorName", value, true);
 	}
 
 	public Feature ProcessorType(String value) {
-		return __f("ProcessorType", value);
+		return __p("ProcessorType", value);
 	}
 
 	public Feature ActivityName(String value) {
-		return __f("ActivityName", value, true);
+		return __p("ActivityName", value, true);
 	}
 
 	public Feature ActivityType(String value) {
-		return __f("ActivityType", value);
+		return __p("ActivityType", value);
 	}
 
 	public Feature ActivityConfField(List<String> path) {
-		return __f("ActivityConfField", StringUtils.join(path.toArray(new String[path.size()]), "/"));
+		return __p("ActivityConfField", StringUtils.join(path.toArray(new String[path.size()]), "/"));
 	}
 
 	public Feature ActivityConfFieldValue(List<String> path, String value) {
 		List<String> l = new ArrayList<String>();
 		l.add("ActivityConfField");
 		l.addAll(path);
-		return __f(StringUtils.join(l, '/'), value);
+		return __p(StringUtils.join(l, '/'), value);
 	}
 
 	public Feature InputPortName(String value) {
-		return __f("InputPortName", value, true);
+		return __sp("InputPortName", value, true);
 	}
 
 	public Feature OutputPortName(String value) {
-		return __f("OutputPortName", value, true);
+		return __sp("OutputPortName", value, true);
 	}
 
 	public Feature FromPort(String value) {
-		return __f("FromPort", value, true);
+		return __pp("FromPort", value, true);
 	}
 
 	public Feature ToPort(String value) {
-		return __f("ToPort", value, true);
+		return __pp("ToPort", value, true);
 	}
-	
+
 	public Feature FromToRoles(String value) {
-		return __f("FromToRoles", value, true);
+		return __pp("FromToRoles", value, true);
 	}
 
 	public void setup(FromTo inOut) {
@@ -79,13 +108,13 @@ public class Features {
 		inOut.addFeature(ProcessorName(inOut.processor().getName()));
 		// Configuration of this processor
 		// ...
-
+		
 		// Focus ports
 		inOut.addFeature(FromPort(inOut.from().getName()));
 		inOut.addFeature(ToPort(inOut.to().getName()));
 		// Roles
 		inOut.addFeature(FromToRoles(inOut.roleFrom() + inOut.roleTo()));
-		
+
 		// Other ports
 		for (InputProcessorPort in : inOut.processor().getInputPorts())
 			if (!in.getName().equals(inOut.from().getName()))

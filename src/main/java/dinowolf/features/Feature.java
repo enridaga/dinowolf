@@ -7,4 +7,5 @@ public interface Feature {
 	public String getValue();
 	public String serialize();
 	public boolean isTokenizable();
+	public FeatureLevel getLevel();
 }

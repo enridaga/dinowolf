@@ -64,13 +64,12 @@ public class FromToImpl implements FromTo {
 	
 	@Override
 	public String roleFrom() {
-		
+		return fromType;
 	}
 	
 	@Override
 	public String roleTo() {
-		// TODO Auto-generated method stub
-		return null;
+		return toType;
 	}
 
 	@Override
