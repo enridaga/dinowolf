@@ -22,9 +22,9 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dinowolf.annotation.InOut;
+import dinowolf.annotation.FromTo;
 import dinowolf.features.Feature;
-import dinowolf.features.InOutExtractor;
+import dinowolf.features.FromToExtractor;
 
 public class Taverna2InspectionTest {
 	private static final Logger l = LoggerFactory.getLogger(Taverna2InspectionTest.class);
@@ -114,7 +114,7 @@ public class Taverna2InspectionTest {
 	public void scufl2_t2flow() throws ReaderException, IOException {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle wb = io.readBundle(__f("Get_similar_phenotypes_for_a_disease_and_a_gene-v1.wfbundle"), null);
-		InOutExtractor ex = new InOutExtractor(wb);
+		FromToExtractor ex = new FromToExtractor(wb);
 		// Iterator<Annotation> it =
 		// wb.getMainWorkflow().getAnnotations().iterator();
 		// while(it.hasNext()){
@@ -142,7 +142,7 @@ public class Taverna2InspectionTest {
 			System.out.println(c.getConfigures());
 			// System.out.println(c.getJson());
 		}
-		for (InOut i : ex.getSet()) {
+		for (FromTo i : ex.getSet()) {
 			System.out.println(i);
 			for(Feature f: i.features()){
 				System.out.print(' ');
