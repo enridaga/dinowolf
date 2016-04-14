@@ -26,11 +26,11 @@ public interface FromTo {
 
 	public Workflow workflow();
 
-	public Set<Feature> features();
+//	public Set<Feature> features();
 
-	public Set<String> annotations();
+//	public Set<String> annotations();
 
-	public void addFeature(Feature feature);
+//	public void addFeature(Feature feature);
 
-	public void annotate(String... datanodeRelations);
+//	public void annotate(String... datanodeRelations);
 }

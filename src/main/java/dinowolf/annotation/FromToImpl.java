@@ -29,8 +29,8 @@ public class FromToImpl implements FromTo {
 	private Processor processor;
 	private Port from;
 	private Port to;
-	private Set<String> annotations;
-	private Set<Feature> features;
+//	private Set<String> annotations;
+//	private Set<Feature> features;
 	private String fromType = null;
 	private String toType = null;
 	
@@ -39,8 +39,8 @@ public class FromToImpl implements FromTo {
 		this.processor = p;
 		this.from = from;
 		this.to = to;
-		this.features = new HashSet<Feature>();
-		this.annotations = new HashSet<String>();
+//		this.features = new HashSet<Feature>();
+//		this.annotations = new HashSet<String>();
 		
 		for(Entry<String,Class<?>> e: types.entrySet()){
 			if(e.getValue().isAssignableFrom(this.from.getClass())){
@@ -72,25 +72,25 @@ public class FromToImpl implements FromTo {
 		return toType;
 	}
 
-	@Override
-	public Set<String> annotations() {
-		return Collections.unmodifiableSet(annotations);
-	}
-
-	@Override
-	public void annotate(String... rels) {
-		annotations.addAll(Arrays.asList(rels));
-	}
-
-	@Override
-	public Set<Feature> features() {
-		return Collections.unmodifiableSet(features);
-	}
-
-	@Override
-	public void addFeature(Feature feature) {
-		features.add(feature);
-	}
+//	@Override
+//	public Set<String> annotations() {
+//		return Collections.unmodifiableSet(annotations);
+//	}
+//
+//	@Override
+//	public void annotate(String... rels) {
+//		annotations.addAll(Arrays.asList(rels));
+//	}
+//
+//	@Override
+//	public Set<Feature> features() {
+//		return Collections.unmodifiableSet(features);
+//	}
+//
+//	@Override
+//	public void addFeature(Feature feature) {
+//		features.add(feature);
+//	}
 
 	@Override
 	public Processor processor() {

@@ -9,6 +9,7 @@ import io.airlift.airline.Option;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.PrintStream;
 import java.util.Set;
 
 import javax.inject.Inject;
@@ -19,9 +20,12 @@ import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 
 import dinowolf.annotation.FromTo;
 import dinowolf.features.Feature;
-import dinowolf.features.FromToExtractor;
+import dinowolf.features.FeatureSet;
+import dinowolf.features.FeaturesExtractor;
 
 public class CommandLineTool {
+	
+	private final static PrintStream P = System.out;
 
 	public static void main(String[] args) throws Exception {
 		new CommandLineTool().parse(args);
@@ -48,7 +52,7 @@ public class CommandLineTool {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		System.out.println();
+		P.println();
 	}
 
 	public static abstract class DWTool {
@@ -87,14 +91,43 @@ public class CommandLineTool {
 				throw new FileNotFoundException(input);
 
 			WorkflowBundle wb = io.readBundle(f, null);
-			FromToExtractor ex = new FromToExtractor(wb);
-			Set<FromTo> inout = ex.getSet();
+			FeatureSet ex = new FeatureSet();
+			ex.add(wb);
+			Set<FromTo> inout = ex.getPortPairs();
 			for (FromTo x : inout) {
-				System.out.println(x);
+				P.println(x);
 			}
 
 		}
 	}
+
+//	@Command(name = "summary", description = "Summary a workflow bundle")
+//	public static final class SummaryCommand extends DWTool {
+//		@Option(name = { "-i", "--input" }, description = "File to read")
+//		public static String input = null;
+//		
+//		private WorkflowBundleIO io = new WorkflowBundleIO();
+//		
+//		@Override
+//		public void perform() throws ReaderException, IOException {
+//			if (input == null)
+//				throw new RuntimeException("Missing parameter: input");
+//
+//			File f = new File(input);
+//			if (!f.exists())
+//				throw new FileNotFoundException(input);
+//
+//			WorkflowBundle wb = io.readBundle(f, null);
+//			FeaturesExtractor ex = new FeaturesExtractor(wb);
+//			Set<FromTo> inout = ex.getSet();
+//			P.println("Processors");
+//			for (FromTo x : inout) {
+//				P.print('-');
+//				P.println(x);
+//			}
+//
+//		}
+//	}
 
 	@Command(name = "features", description = "Extract features from a workflow bundle")
 	public static final class FeaturesCommand extends DWTool {
@@ -114,16 +147,16 @@ public class CommandLineTool {
 				throw new FileNotFoundException(input);
 
 			WorkflowBundle wb = io.readBundle(f, null);
-			FromToExtractor ex = new FromToExtractor(wb);
-			Set<FromTo> inout = ex.getSet();
+			FeatureSet ex = new FeatureSet();
+			ex.add(wb);
+			Set<FromTo> inout = ex.getPortPairs();
 			for (FromTo x : inout) {
-				System.out.println(x);
-				for (Feature y : x.features()) {
-					System.out.print(" - ");
-					System.out.println(y);
+				P.println(x);
+				for (Feature y : ex.getFeatures(x)) {
+					P.print(" - ");
+					P.println(y);
 				}
 			}
-
 		}
 	}
 
