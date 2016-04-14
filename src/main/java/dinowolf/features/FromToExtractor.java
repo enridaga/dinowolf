@@ -9,23 +9,29 @@ import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
+import org.apache.taverna.scufl2.api.port.Port;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dinowolf.annotation.InOut;
-import dinowolf.annotation.InOutImpl;
+import dinowolf.annotation.FromTo;
+import dinowolf.annotation.FromToImpl;
 
-public class InOutExtractor {
-	private static final Logger l = LoggerFactory.getLogger(InOutExtractor.class);
-	private Set<InOut> inOut = new HashSet<InOut>();
+public class FromToExtractor {
+	private static final Logger l = LoggerFactory.getLogger(FromToExtractor.class);
+	private Set<FromTo> inOut = new HashSet<FromTo>();
 	private Features F = new Features();
 
-	public InOutExtractor(WorkflowBundle wb) {
+	public FromToExtractor(WorkflowBundle wb) {
 		for (Workflow w : wb.getWorkflows())
 			for (Processor p : w.getProcessors()) {
-				for (InputProcessorPort i : p.getInputPorts()) {
-					for (OutputProcessorPort o : p.getOutputPorts()) {
-						InOut io = new InOutImpl(w, p, i, o);
+				Set<Port> allPorts = new HashSet<Port>();
+				allPorts.addAll(p.getInputPorts());
+				allPorts.addAll(p.getOutputPorts());
+				for (Port i : allPorts) {
+					for (Port o : allPorts) {
+						if (i.equals(o))
+							continue;
+						FromTo io = new FromToImpl(w, p, i, o);
 						l.trace("{}", io);
 						F.setup(io);
 						inOut.add(io);
@@ -34,7 +40,7 @@ public class InOutExtractor {
 			}
 	}
 
-	public Set<InOut> getSet() {
+	public Set<FromTo> getSet() {
 		return Collections.unmodifiableSet(inOut);
 	}
 }

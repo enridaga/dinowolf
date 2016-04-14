@@ -1,16 +1,21 @@
 package dinowolf.features;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.taverna.scufl2.api.configurations.Configuration;
+import org.apache.taverna.scufl2.api.port.InputProcessorPort;
+import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 import org.apache.taverna.scufl2.api.profiles.Profile;
 
 import com.fasterxml.jackson.databind.JsonNode;
 
-import dinowolf.annotation.InOut;
+import dinowolf.annotation.FromTo;
 
 public class Features {
 	private Feature __f(String name, String value, boolean t) {
@@ -56,16 +61,39 @@ public class Features {
 		return __f("OutputPortName", value, true);
 	}
 
-	public void setup(InOut inOut) {
+	public Feature FromPort(String value) {
+		return __f("FromPort", value, true);
+	}
+
+	public Feature ToPort(String value) {
+		return __f("ToPort", value, true);
+	}
+	
+	public Feature FromToRoles(String value) {
+		return __f("FromToRoles", value, true);
+	}
+
+	public void setup(FromTo inOut) {
 		// Processor
 		inOut.addFeature(ProcessorType(inOut.processor().getType().toString()));
 		inOut.addFeature(ProcessorName(inOut.processor().getName()));
 		// Configuration of this processor
 		// ...
 
-		// Ports
-		inOut.addFeature(InputPortName(inOut.from().getName()));
-		inOut.addFeature(OutputPortName(inOut.to().getName()));
+		// Focus ports
+		inOut.addFeature(FromPort(inOut.from().getName()));
+		inOut.addFeature(ToPort(inOut.to().getName()));
+		// Roles
+		inOut.addFeature(FromToRoles(inOut.roleFrom() + inOut.roleTo()));
+		
+		// Other ports
+		for (InputProcessorPort in : inOut.processor().getInputPorts())
+			if (!in.getName().equals(inOut.from().getName()))
+				inOut.addFeature(InputPortName(in.getName()));
+
+		for (OutputProcessorPort out : inOut.processor().getOutputPorts())
+			if (!out.getName().equals(inOut.to().getName()))
+				inOut.addFeature(OutputPortName(out.getName()));
 
 		// Activities
 		for (Profile p : inOut.workflow().getParent().getProfiles()) {
@@ -82,7 +110,7 @@ public class Features {
 		}
 	}
 
-	private void jsonToFeature(InOut inOut, JsonNode json, List<String> path) {
+	private void jsonToFeature(FromTo inOut, JsonNode json, List<String> path) {
 		Iterator<String> fields = json.fieldNames();
 		while (fields.hasNext()) {
 			List<String> branch = new ArrayList<String>();

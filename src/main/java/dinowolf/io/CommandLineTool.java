@@ -17,9 +17,9 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 
-import dinowolf.annotation.InOut;
+import dinowolf.annotation.FromTo;
 import dinowolf.features.Feature;
-import dinowolf.features.InOutExtractor;
+import dinowolf.features.FromToExtractor;
 
 public class CommandLineTool {
 
@@ -32,7 +32,8 @@ public class CommandLineTool {
 		CliBuilder<DWTool> build = Cli.<DWTool> builder("dinowolf")
 				.withDescription("Dinowolf Tool")
 				.withDefaultCommand(HelpCommand.class)
-				.withCommand(FeaturesCommand.class); // Statistics
+				.withCommand(FeaturesCommand.class)
+				.withCommand(PortmapsCommand.class); // Statistics
 
 		return build.build();
 	}
@@ -51,7 +52,8 @@ public class CommandLineTool {
 	}
 
 	public static abstract class DWTool {
-		public DWTool() {}
+		public DWTool() {
+		}
 
 		public abstract void perform() throws Exception;
 	}
@@ -68,9 +70,8 @@ public class CommandLineTool {
 		}
 	}
 
-	@Command(name = "features", description = "Extract features from a workflow bundle")
-	public static final class FeaturesCommand extends DWTool {
-		
+	@Command(name = "portmaps", description = "Lists port maps from a workflow bundle")
+	public static final class PortmapsCommand extends DWTool {
 		@Option(name = { "-i", "--input" }, description = "File to read")
 		public static String input = null;
 
@@ -86,9 +87,36 @@ public class CommandLineTool {
 				throw new FileNotFoundException(input);
 
 			WorkflowBundle wb = io.readBundle(f, null);
-			InOutExtractor ex = new InOutExtractor(wb);
-			Set<InOut> inout = ex.getSet();
-			for (InOut x : inout) {
+			FromToExtractor ex = new FromToExtractor(wb);
+			Set<FromTo> inout = ex.getSet();
+			for (FromTo x : inout) {
+				System.out.println(x);
+			}
+
+		}
+	}
+
+	@Command(name = "features", description = "Extract features from a workflow bundle")
+	public static final class FeaturesCommand extends DWTool {
+
+		@Option(name = { "-i", "--input" }, description = "File to read")
+		public static String input = null;
+
+		private WorkflowBundleIO io = new WorkflowBundleIO();
+
+		@Override
+		public void perform() throws ReaderException, IOException {
+			if (input == null)
+				throw new RuntimeException("Missing parameter: input");
+
+			File f = new File(input);
+			if (!f.exists())
+				throw new FileNotFoundException(input);
+
+			WorkflowBundle wb = io.readBundle(f, null);
+			FromToExtractor ex = new FromToExtractor(wb);
+			Set<FromTo> inout = ex.getSet();
+			for (FromTo x : inout) {
 				System.out.println(x);
 				for (Feature y : x.features()) {
 					System.out.print(" - ");
