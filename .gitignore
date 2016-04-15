@@ -4,3 +4,4 @@
 .project
 .settings/
 /myexperiment/
+.DS_Store
