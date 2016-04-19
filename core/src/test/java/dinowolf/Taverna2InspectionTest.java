@@ -1,7 +1,5 @@
 package dinowolf;
 
-import gonzales.xml.Gonzo;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -22,9 +20,10 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dinowolf.annotation.FromTo;
 import dinowolf.features.Feature;
 import dinowolf.features.FeatureSet;
+import dinowolf.features.FeatureSetExtractor;
+import gonzales.xml.Gonzo;
 
 public class Taverna2InspectionTest {
 	private static final Logger l = LoggerFactory.getLogger(Taverna2InspectionTest.class);
@@ -114,8 +113,7 @@ public class Taverna2InspectionTest {
 	public void scufl2_t2flow() throws ReaderException, IOException {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle wb = io.readBundle(__f("Get_similar_phenotypes_for_a_disease_and_a_gene-v1.wfbundle"), null);
-		FeatureSet ex = new FeatureSet();
-		ex.add(wb);
+		FeatureSet ex = FeatureSetExtractor.generate(wb);
 		// Iterator<Annotation> it =
 		// wb.getMainWorkflow().getAnnotations().iterator();
 		// while(it.hasNext()){
@@ -143,7 +141,7 @@ public class Taverna2InspectionTest {
 			System.out.println(c.getConfigures());
 			// System.out.println(c.getJson());
 		}
-		for (FromTo i : ex.getPortPairs()) {
+		for (String i : ex.getPortPairs()) {
 			System.out.println(i);
 			for(Feature f: ex.getFeatures(i)){
 				System.out.print(' ');

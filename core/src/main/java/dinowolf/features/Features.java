@@ -1,20 +1,9 @@
 package dinowolf.features;
 
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.taverna.scufl2.api.configurations.Configuration;
-import org.apache.taverna.scufl2.api.port.InputProcessorPort;
-import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
-import org.apache.taverna.scufl2.api.profiles.Profile;
-
-import com.fasterxml.jackson.databind.JsonNode;
-
-import dinowolf.annotation.FromTo;
 
 public class Features {
 	private Feature __f(String name, String value, FeatureLevel level, boolean t) {
@@ -25,6 +14,7 @@ public class Features {
 		return new FeatureImpl(name, value, level);
 	}
 
+	@SuppressWarnings("unused")
 	private Feature __w(String name, String value) {
 		return __f(name, value, FeatureLevel.Workflow);
 	}
@@ -33,14 +23,17 @@ public class Features {
 		return __f(name, value, FeatureLevel.Processor);
 	}
 
+	@SuppressWarnings("unused")
 	private Feature __sp(String name, String value) {
 		return __f(name, value, FeatureLevel.SinglePort);
 	}
 
+	@SuppressWarnings("unused")
 	private Feature __pp(String name, String value) {
 		return __f(name, value, FeatureLevel.FromToPorts);
 	}
 
+	@SuppressWarnings("unused")
 	private Feature __w(String name, String value, boolean t) {
 		return __f(name, value, FeatureLevel.Workflow, t);
 	}

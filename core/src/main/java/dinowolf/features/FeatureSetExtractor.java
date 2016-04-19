@@ -2,64 +2,57 @@ package dinowolf.features;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
-import org.apache.taverna.scufl2.api.core.Processor;
-import org.apache.taverna.scufl2.api.core.Workflow;
-import org.apache.taverna.scufl2.api.port.Port;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dinowolf.annotation.FromTo;
-import dinowolf.annotation.FromToImpl;
+import dinowolf.annotation.FromToCollector;
 
-public class FeatureSet {
-	private static final Logger l = LoggerFactory.getLogger(FeatureSet.class);
+public class FeatureSetExtractor {
+	private static final Logger l = LoggerFactory.getLogger(FeatureSetExtractor.class);
 
-	private Features F = new Features();
-	private FeaturesExtractor E = new FeaturesExtractor();
-	private Map<FromTo, Set<Feature>> featuresMap = new HashMap<FromTo, Set<Feature>>();
+	private static final FeaturesExtractor E = new FeaturesExtractor();
+	private static final FromToCollector C = new FromToCollector();
 
-	public FeatureSet() {
-
+	public final static FeatureSet generate(final WorkflowBundle bundle) {
+		return new FeatureSetMap(bundle, extract(bundle));
 	}
 
-	public void add(WorkflowBundle workflow) {
-		for (Workflow w : workflow.getWorkflows()) {
-			add(w);
+	public final static Map<String, Set<Feature>> extract(WorkflowBundle bundle) {
+		Map<String, Set<Feature>> featuresMap = new HashMap<String, Set<Feature>>();
+		for (FromTo io : C.collect(bundle)) {
+			Set<Feature> fff = E.extract(io);
+			featuresMap.put(io.getId(), fff);
+			l.trace("{}: {} features extracted", io.getId(), fff.size());
 		}
+		
+		return featuresMap;
 	}
 
-	public void add(Workflow workflow) {
-		for (Processor p : workflow.getProcessors()) {
-			add(p);
+	private static class FeatureSetMap implements FeatureSet {
+		private WorkflowBundle bundle;
+
+		private FeatureSetMap(WorkflowBundle bundle, Map<String, Set<Feature>> featuresMap) {
+			this.bundle = bundle;
+			this.featuresMap = featuresMap;
 		}
-	}
 
-	public void add(Processor processor) {
-		Set<Port> allPorts = new HashSet<Port>();
-		allPorts.addAll(processor.getInputPorts());
-		allPorts.addAll(processor.getOutputPorts());
-		for (Port i : allPorts) {
-			for (Port o : allPorts) {
-				if (i.equals(o))
-					continue;
-				FromTo io = new FromToImpl(processor.getParent(), processor, i, o);
-				l.trace("{}", io);
-				Set<Feature> fff = E.extract(io);
-				featuresMap.put(io, fff);
-			}
+		private Map<String, Set<Feature>> featuresMap;
+
+		public Set<String> getPortPairs() {
+			return Collections.unmodifiableSet(featuresMap.keySet());
 		}
-	}
 
-	public Set<FromTo> getPortPairs() {
-		return Collections.unmodifiableSet(featuresMap.keySet());
-	}
+		public Set<Feature> getFeatures(String portPair) {
+			return Collections.unmodifiableSet(featuresMap.get(portPair));
+		}
 
-	public Set<Feature> getFeatures(FromTo portPair) {
-		return Collections.unmodifiableSet(featuresMap.get(portPair));
+		public WorkflowBundle getWorkflowBundle() {
+			return bundle;
+		}
 	}
 }

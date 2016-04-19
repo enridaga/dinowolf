@@ -1,14 +1,12 @@
 package dinowolf.features;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.taverna.scufl2.api.configurations.Configuration;
-import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 import org.apache.taverna.scufl2.api.profiles.Profile;
@@ -63,6 +61,7 @@ public class FeaturesExtractor {
 				// No configuration
 			}
 		}
+		l.trace("{} features extracted", features.size());
 		return features;
 	}
 

@@ -1,11 +1,5 @@
 package dinowolf.io;
 
-import io.airlift.airline.Cli;
-import io.airlift.airline.Cli.CliBuilder;
-import io.airlift.airline.Command;
-import io.airlift.airline.Help;
-import io.airlift.airline.Option;
-
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,10 +12,14 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 
-import dinowolf.annotation.FromTo;
 import dinowolf.features.Feature;
 import dinowolf.features.FeatureSet;
-import dinowolf.features.FeaturesExtractor;
+import dinowolf.features.FeatureSetExtractor;
+import io.airlift.airline.Cli;
+import io.airlift.airline.Cli.CliBuilder;
+import io.airlift.airline.Command;
+import io.airlift.airline.Help;
+import io.airlift.airline.Option;
 
 public class CommandLineTool {
 	
@@ -91,10 +89,9 @@ public class CommandLineTool {
 				throw new FileNotFoundException(input);
 
 			WorkflowBundle wb = io.readBundle(f, null);
-			FeatureSet ex = new FeatureSet();
-			ex.add(wb);
-			Set<FromTo> inout = ex.getPortPairs();
-			for (FromTo x : inout) {
+			FeatureSet ex = FeatureSetExtractor.generate(wb);
+			Set<String> inout = ex.getPortPairs();
+			for (String x : inout) {
 				P.println(x);
 			}
 
@@ -147,10 +144,9 @@ public class CommandLineTool {
 				throw new FileNotFoundException(input);
 
 			WorkflowBundle wb = io.readBundle(f, null);
-			FeatureSet ex = new FeatureSet();
-			ex.add(wb);
-			Set<FromTo> inout = ex.getPortPairs();
-			for (FromTo x : inout) {
+			FeatureSet ex = FeatureSetExtractor.generate(wb);
+			Set<String> inout = ex.getPortPairs();
+			for (String x : inout) {
 				P.println(x);
 				for (Feature y : ex.getFeatures(x)) {
 					P.print(" - ");

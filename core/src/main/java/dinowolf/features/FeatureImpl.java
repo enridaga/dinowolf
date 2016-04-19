@@ -27,6 +27,11 @@ public class FeatureImpl implements Feature {
 	}
 
 	@Override
+	public String getId() {
+		return Integer.toString(hashCode);
+	}
+
+	@Override
 	public String getValue() {
 		return v;
 	}
