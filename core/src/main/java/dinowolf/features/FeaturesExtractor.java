@@ -19,14 +19,14 @@ import dinowolf.annotation.FromTo;
 
 public class FeaturesExtractor {
 	private static final Logger l = LoggerFactory.getLogger(FeaturesExtractor.class);
-	private Features F = new Features();
+	private FeatureCatalogue F = new FeatureCatalogue();
 
 	public FeaturesExtractor() {
 
 	}
 
-	public Set<Feature> extract(FromTo inOut) {
-		Set<Feature> features = new HashSet<Feature>();
+	public FeatureHashSet extract(FromTo inOut) {
+		FeatureHashSet features = new FeatureHashSet();
 		// Processor
 		features.add(F.ProcessorType(inOut.processor().getType().toString()));
 		features.add(F.ProcessorName(inOut.processor().getName()));

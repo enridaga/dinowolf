@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 
-public class Features {
+public final class FeatureCatalogue {
 	private Feature __f(String name, String value, FeatureLevel level, boolean t) {
 		return new FeatureImpl(name, value, level, t);
 	}

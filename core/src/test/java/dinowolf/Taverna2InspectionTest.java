@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import dinowolf.features.Feature;
-import dinowolf.features.FeatureSet;
+import dinowolf.features.FeaturesMap;
 import dinowolf.features.FeatureSetExtractor;
 import gonzales.xml.Gonzo;
 
@@ -113,7 +113,7 @@ public class Taverna2InspectionTest {
 	public void scufl2_t2flow() throws ReaderException, IOException {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle wb = io.readBundle(__f("Get_similar_phenotypes_for_a_disease_and_a_gene-v1.wfbundle"), null);
-		FeatureSet ex = FeatureSetExtractor.generate(wb);
+		FeaturesMap ex = FeatureSetExtractor.generate(wb);
 		// Iterator<Annotation> it =
 		// wb.getMainWorkflow().getAnnotations().iterator();
 		// while(it.hasNext()){
