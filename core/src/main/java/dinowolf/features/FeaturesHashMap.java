@@ -11,12 +11,26 @@ public class FeaturesHashMap extends HashMap<String, FeatureSet> implements Feat
 	 */
 	private static final long serialVersionUID = 1L;
 
+	/**
+	 * read only
+	 */
 	public Set<String> getPortPairs() {
 		return Collections.unmodifiableSet(keySet());
 	}
 
-	public Set<Feature> getFeatures(String portPair) {
-		return Collections.unmodifiableSet(get(portPair));
+	/**
+	 * Modifiable
+	 */
+	public FeatureSet getFeatures(String portPair) {
+		return get(portPair);
 	}
 
+	@Override
+	public FeatureSet allFeatures() {
+		FeatureSet set = new FeatureHashSet();
+		for(FeatureSet s : values()){
+			set.addAll(s);
+		}
+		return set;
+	}
 }

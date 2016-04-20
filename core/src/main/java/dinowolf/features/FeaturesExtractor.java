@@ -17,7 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 import dinowolf.annotation.FromTo;
 
-public class FeaturesExtractor {
+class FeaturesExtractor {
 	private static final Logger l = LoggerFactory.getLogger(FeaturesExtractor.class);
 	private FeatureCatalogue F = new FeatureCatalogue();
 

@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 public class FileRepositoryTest {
 	private static final Logger l = LoggerFactory.getLogger(FileRepositoryTest.class);
+	
 	@Rule
 	public TestName name = new TestName();
 
@@ -34,6 +35,7 @@ public class FileRepositoryTest {
 		if (directory.exists())
 			FileUtils.deleteDirectory(directory);
 		directory.mkdir();
+		directory.deleteOnExit();
 	}
 
 	@Before
@@ -58,6 +60,5 @@ public class FileRepositoryTest {
 		l.debug("Loaded workflow name {}", bundle2.getName());
 		l.debug("Loaded workflow id {}", bundle2.getIdentifier());
 		Assert.assertTrue(bundle2.getIdentifier().equals(bundle.getIdentifier()));
-	
 	}
 }

@@ -14,7 +14,7 @@ import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 
 import dinowolf.features.Feature;
 import dinowolf.features.FeaturesMap;
-import dinowolf.features.FeatureSetExtractor;
+import dinowolf.features.FeaturesMapExtractor;
 import io.airlift.airline.Cli;
 import io.airlift.airline.Cli.CliBuilder;
 import io.airlift.airline.Command;
@@ -89,7 +89,7 @@ public class CommandLineTool {
 				throw new FileNotFoundException(input);
 
 			WorkflowBundle wb = io.readBundle(f, null);
-			FeaturesMap ex = FeatureSetExtractor.generate(wb);
+			FeaturesMap ex = FeaturesMapExtractor.generate(wb);
 			Set<String> inout = ex.getPortPairs();
 			for (String x : inout) {
 				P.println(x);
@@ -144,7 +144,7 @@ public class CommandLineTool {
 				throw new FileNotFoundException(input);
 
 			WorkflowBundle wb = io.readBundle(f, null);
-			FeaturesMap ex = FeatureSetExtractor.generate(wb);
+			FeaturesMap ex = FeaturesMapExtractor.generate(wb);
 			Set<String> inout = ex.getPortPairs();
 			for (String x : inout) {
 				P.println(x);

@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 import dinowolf.features.Feature;
 import dinowolf.features.FeaturesMap;
-import dinowolf.features.FeatureSetExtractor;
+import dinowolf.features.FeaturesMapExtractor;
 import gonzales.xml.Gonzo;
 
 public class Taverna2InspectionTest {
@@ -113,23 +113,11 @@ public class Taverna2InspectionTest {
 	public void scufl2_t2flow() throws ReaderException, IOException {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle wb = io.readBundle(__f("Get_similar_phenotypes_for_a_disease_and_a_gene-v1.wfbundle"), null);
-		FeaturesMap ex = FeatureSetExtractor.generate(wb);
-		// Iterator<Annotation> it =
-		// wb.getMainWorkflow().getAnnotations().iterator();
-		// while(it.hasNext()){
-		// System.out.print('-');
-		// System.out.println(it.next());
-		// }
-
-		// for(InputPort ip : wb.getMainWorkflow().getInputPorts()){
-		// Iterator<Annotation> it = ip.
-		// }
-		//
-
+		FeaturesMap ex = FeaturesMapExtractor.generate(wb);
+		
 		System.out.println("Profiles count: " + wb.getProfiles().size());
 		Profile p = wb.getMainProfile();
-		// Map<Processor,Activity> activityBindings = new
-		// HashMap<Processor,Activity>();
+		
 		Map<Processor, ProcessorBinding> bindings = new HashMap<Processor, ProcessorBinding>();
 		Iterator<ProcessorBinding> it = p.getProcessorBindings().iterator();
 		while (it.hasNext()) {
@@ -147,59 +135,6 @@ public class Taverna2InspectionTest {
 				System.out.print(' ');
 				System.out.println(f);
 			}
-			// Configuration c = ;
-
-			// Configuration c =
-			// wb.getTools().configurationForActivityBoundToProcessor(i.processor(),
-			// p);
-			// JsonNode jn = c.getJson();
-			// System.out.println(c.getAnnotations());
-			// while (it.hasNext()) {
-			// System.out.print('-');
-			// System.out.println(it.next());
-			// }
-
-			// Configuration c =
-			// p.getTools().configurationForActivityBoundToProcessor(i.processor(),
-			// p);
-			//
-//			Configuration ac;
-//			try {
-//				//ac = bindings.get(i.processor()).getBoundActivity().getConfiguration();
-//				ac = i.processor().getActivityConfiguration(p);
-//				//System.out.println(ac.getJsonAsString());
-//				Iterator<String> fields = ac.getJson().fieldNames(); 
-//				while(fields.hasNext()){
-//					System.out.print(' ');
-//					System.out.println(fields.next());
-//				}
-//			} catch (Exception e) {
-//				// No configuration
-//			}
-//			Configuration pc;
-//			try {
-//				pc = bindings.get(i.processor()).getBoundProcessor().getConfiguration(p);
-////				System.out.println(pc.getJsonAsString());
-//				Iterator<String> fields = pc.getJson().fieldNames(); 
-//				while(fields.hasNext()){
-//					System.out.print(' ');
-//					System.out.println(fields.next());
-//				}
-//			} catch (Exception e) {
-//				// No configuration
-//			}
-//			// Iterator<ProcessorBinding> it =
-//			// p.getProcessorBindings().iterator();
-//			// while (it.hasNext()) {
-//			// ProcessorBinding pb = it.next();
-//			//
-//			// System.out.print('-');
-//			// Set<ProcessorInputPortBinding> ipbs = pb.getInputPortBindings();
-//			// for (ProcessorInputPortBinding pipb : ipbs) {
-//			// System.out.println(pipb.getBoundActivityPort());
-//			// }
-//			// }
-
 		}
 	}
 }

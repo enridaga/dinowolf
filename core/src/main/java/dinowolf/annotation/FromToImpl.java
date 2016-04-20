@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
@@ -27,16 +28,25 @@ public class FromToImpl implements FromTo {
 	private String fromType = null;
 	private String toType = null;
 	private String id = null;
+	private int hashCode;
 
+	/**
+	 * 
+	 * @param w
+	 * @param p
+	 * @param from
+	 * @param to
+	 */
 	public FromToImpl(Workflow w, Processor p, Port from, Port to) {
 		this.workflow = w;
 		this.processor = p;
 		this.from = from;
 		this.to = to;
+		
 		String[] s = new String[] { workflow.getName(), processor.getName(), "from:" + from.getName(),
 				"to:" + to.getName() };
 		id = StringUtils.join(s, '/');
-
+		this.hashCode = new HashCodeBuilder().append(FromTo.class).append(id).toHashCode();
 		for (Entry<String, Class<?>> e : types.entrySet()) {
 			if (e.getValue().isAssignableFrom(this.from.getClass())) {
 				fromType = e.getKey();
@@ -85,4 +95,9 @@ public class FromToImpl implements FromTo {
 	public String getId() {
 		return id;
 	};
+	
+	@Override
+	public int hashCode() {
+		return hashCode;
+	}
 }

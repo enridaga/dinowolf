@@ -7,6 +7,8 @@ public class Vocabulary {
 	public static final String PROPERTY = "http://dinowolf.kmi.open.ac.uk/ns/property#";
 	public static final String FEATURE = NS + "feature/";
 	public static final String GRAPH = NS + "graph/";
+	public static final String PORTPAIR = NS + "portspair/";
+	public static final String BUNDLE = NS + "bundle/";
 	//
 	public static final String Feature = TYPE + "Feature";
 	public static final String hasFeature = PROPERTY + "feature";
@@ -14,5 +16,6 @@ public class Vocabulary {
 	public static final String level = PROPERTY + "level";
 	public static final String tokenizable = PROPERTY + "tokenizable";
 	public static final String value = PROPERTY + "value";
+	
 
 }

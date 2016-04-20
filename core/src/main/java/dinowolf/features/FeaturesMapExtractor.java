@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import dinowolf.annotation.FromTo;
 import dinowolf.annotation.FromToCollector;
 
-public class FeatureSetExtractor {
-	private static final Logger l = LoggerFactory.getLogger(FeatureSetExtractor.class);
+public class FeaturesMapExtractor {
+	private static final Logger l = LoggerFactory.getLogger(FeaturesMapExtractor.class);
 
 	private static final FeaturesExtractor E = new FeaturesExtractor();
 	private static final FromToCollector C = new FromToCollector();
@@ -17,7 +17,7 @@ public class FeatureSetExtractor {
 		return new BundleFeatureMapImpl(bundle, extract(bundle));
 	}
 
-	public final static FeaturesHashMap extract(WorkflowBundle bundle) {
+	public final static FeaturesHashMap extract( WorkflowBundle bundle) {
 		FeaturesHashMap featuresMap = new FeaturesHashMap();
 		for (FromTo io : C.collect(bundle)) {
 			FeatureHashSet fff = E.extract(io);
