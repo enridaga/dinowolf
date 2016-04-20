@@ -3,15 +3,14 @@ package dinowolf.database.repository;
 import java.io.File;
 import java.io.IOException;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,6 +21,9 @@ public class FileRepositoryTest {
 	@Rule
 	public TestName name = new TestName();
 
+	@Rule
+	public TemporaryFolder testFolder = new TemporaryFolder();
+	
 	private static File directory;
 
 	private Repository repository;
@@ -29,17 +31,9 @@ public class FileRepositoryTest {
 
 	private String bundleFile = "ADR-S-v2";
 
-	@BeforeClass
-	public static void beforeClass() throws IOException {
-		directory = new File("./FileRepositoryTest-data");
-		if (directory.exists())
-			FileUtils.deleteDirectory(directory);
-		directory.mkdir();
-		directory.deleteOnExit();
-	}
-
 	@Before
-	public void before() {
+	public void before() throws IOException {
+		directory = testFolder.newFolder();
 		repository = new FileRepository(directory);
 		io = new WorkflowBundleIO();
 	}
