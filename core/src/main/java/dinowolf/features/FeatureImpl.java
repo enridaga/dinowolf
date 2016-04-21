@@ -1,6 +1,6 @@
 package dinowolf.features;
 
-import org.apache.commons.lang.builder.HashCodeBuilder;
+import org.apache.commons.lang3.builder.HashCodeBuilder;
 
 public class FeatureImpl implements Feature {
 	private boolean t;
@@ -14,7 +14,8 @@ public class FeatureImpl implements Feature {
 		n = name;
 		v = value;
 		l = level;
-		hashCode = new HashCodeBuilder().append(getClass()).append(t).append(name).append(value).append(l).toHashCode();
+		hashCode = new HashCodeBuilder(17, 37).append(Feature.class).append(t).append(v).append(v).append(l)
+				.toHashCode();
 	}
 
 	public FeatureImpl(String name, String value, FeatureLevel level) {
@@ -68,5 +69,13 @@ public class FeatureImpl implements Feature {
 	@Override
 	public int hashCode() {
 		return hashCode;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Feature) {
+			return obj.hashCode() == this.hashCode();
+		}
+		return false;
 	}
 }
