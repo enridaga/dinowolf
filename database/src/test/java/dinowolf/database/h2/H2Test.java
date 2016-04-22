@@ -164,7 +164,7 @@ public class H2Test {
 
 		// FEATURE
 		stm = conn.prepareStatement(H2Queries.INSERT_FEATURE, Statement.RETURN_GENERATED_KEYS);
-		l.info(">>>>>>>>>>>>{}<<<<<<<<<<<<",H2Queries.hashCode("1234567890"));
+		l.info("hash: {}",H2Queries.hashCode("1234567890"));
 		stm.setString(1, H2Queries.hashCode("1234567890"));
 		stm.setString(2, "MyTestFeature");
 		stm.setString(3, "a value");

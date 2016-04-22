@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.FilenameUtils;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
@@ -20,6 +21,9 @@ public class FileRepository implements Repository {
 
 	public FileRepository(File directory) {
 		this.directory = directory;
+		if (!directory.exists()) {
+			directory.mkdirs();
+		}
 	}
 
 	@Override
@@ -45,10 +49,11 @@ public class FileRepository implements Repository {
 	public void put(WorkflowBundle bundle, String repositoryId, boolean force) throws IOException {
 		File target = getFile(repositoryId);
 		if (!target.exists() || force) {
-			l.trace("Putting new bundle: {}", repositoryId);
+			l.trace("Putting new bundle: {}", target);
 			try {
 				io.writeBundle(bundle, target, "application/vnd.taverna.scufl2.workflow-bundle");
 			} catch (WriterException | IOException e) {
+				l.error("Cannot write bundle: {}", e.getMessage());
 				throw new IOException(e);
 			}
 		} else {
@@ -62,5 +67,17 @@ public class FileRepository implements Repository {
 
 	private File getFile(String repositoryId) {
 		return new File(directory, new StringBuilder().append(repositoryId).append(".wfbundle").toString());
+	}
+
+	@Override
+	public String put(File wfbundle, boolean override) throws IOException {
+		try {
+			WorkflowBundle b = io.readBundle(wfbundle, null);
+			String repoId = FilenameUtils.removeExtension(wfbundle.getName());
+			put(b, repoId, override);
+			return repoId;
+		} catch (ReaderException e) {
+			throw new IOException(e);
+		}
 	}
 }
