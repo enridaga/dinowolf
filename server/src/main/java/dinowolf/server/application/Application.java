@@ -20,6 +20,10 @@ public class Application extends ResourceConfig implements ServletContextListene
 	public static final String _ParamLOAD = "dinowolf.loadfrom";
 	public static final String _ParamMANAGER = "dinowolf.manager";
 
+	public Application() {
+		packages("dinowolf.server.application.rest");
+	}
+	
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		log.info("Initializing context.");
@@ -65,8 +69,7 @@ public class Application extends ResourceConfig implements ServletContextListene
 
 	@Override
 	public void contextDestroyed(ServletContextEvent sce) {
-		// TODO Auto-generated method stub
-
+		//
 	}
 
 }

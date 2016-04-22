@@ -2,6 +2,7 @@ package dinowolf.database.h2;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -150,7 +151,7 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 							}else{
 								insertFeature.setInt(1, f.hashCode());
 								insertFeature.setString(2, f.getName());
-								insertFeature.setString(3, f.getValue());
+								insertFeature.setCharacterStream(3, new StringReader(f.getValue()));
 								insertFeature.setInt(4, H2Queries.toInt(f.getLevel()));
 								insertFeature.setBoolean(5, f.isTokenizable());
 								insertFeature.execute();

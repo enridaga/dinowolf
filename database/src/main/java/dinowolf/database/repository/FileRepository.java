@@ -3,7 +3,7 @@ package dinowolf.database.repository;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FilenameUtils;
@@ -28,12 +28,16 @@ public class FileRepository implements Repository {
 
 	@Override
 	public List<String> list() {
-		return Arrays.asList(directory.list(new FilenameFilter() {
+		List<String> ids = new ArrayList<String>();
+		for(String fname : directory.list(new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
 				return name.endsWith(".wfbundle");
 			}
-		}));
+		})){
+			ids.add(FilenameUtils.removeExtension(fname));
+		}
+		return ids;
 	}
 
 	@Override
