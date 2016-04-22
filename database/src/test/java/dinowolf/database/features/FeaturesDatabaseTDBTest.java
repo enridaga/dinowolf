@@ -8,6 +8,7 @@ import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
@@ -15,11 +16,12 @@ import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dinowolf.database.tdb.FeaturesDatabaseTDB;
 import dinowolf.features.FeaturesMap;
 import dinowolf.features.FeaturesMapExtractor;
 
-public class FeaturesDatabaseTest {
-	private static final Logger l = LoggerFactory.getLogger(FeaturesDatabaseTest.class);
+public class FeaturesDatabaseTDBTest {
+	private static final Logger l = LoggerFactory.getLogger(FeaturesDatabaseTDBTest.class);
 
 	@Rule
 	public TestName name = new TestName();
@@ -42,6 +44,7 @@ public class FeaturesDatabaseTest {
 
 	}
 
+	@Ignore
 	@Test
 	public void put() throws ReaderException, IOException {
 		l.info("{}", name.getMethodName());
@@ -49,7 +52,6 @@ public class FeaturesDatabaseTest {
 				.readBundle(getClass().getClassLoader().getResourceAsStream("./" + bundleFile + ".wfbundle"), null);
 
 		FeaturesMap map = FeaturesMapExtractor.extract(bundle);
-
 		Assert.assertTrue(features.getFeatures().size() == 0);
 
 		FeaturesMap fm = features.getFeatures(bundleFile);

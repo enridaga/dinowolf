@@ -6,7 +6,8 @@ import java.util.List;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 
-import dinowolf.database.features.FeaturesDatabaseTDB;
+import dinowolf.database.features.FeaturesDatabase;
+import dinowolf.database.h2.FeaturesDatabaseH2;
 import dinowolf.database.repository.FileRepository;
 import dinowolf.database.repository.Repository;
 import dinowolf.features.FeatureSet;
@@ -15,13 +16,13 @@ import dinowolf.features.FeaturesMap;
 class DatabaseManagerImpl implements DatabaseManager {
 	private File home;
 	private Repository repository;
-	private FeaturesDatabaseTDB features;
+	private FeaturesDatabase features;
 
 	public DatabaseManagerImpl(File home) {
 		this.home = home;
 		this.home.mkdirs();
 		this.repository = new FileRepository(new File(home, "repository"));
-		this.features = new FeaturesDatabaseTDB(new File(home, "metadata"));
+		this.features = new FeaturesDatabaseH2(new File(home, "metadata"));
 	}
 
 	@Override

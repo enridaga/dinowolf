@@ -164,7 +164,8 @@ public class H2Test {
 
 		// FEATURE
 		stm = conn.prepareStatement(H2Queries.INSERT_FEATURE, Statement.RETURN_GENERATED_KEYS);
-		stm.setInt(1, 1234567890);
+		l.info(">>>>>>>>>>>>{}<<<<<<<<<<<<",H2Queries.hashCode("1234567890"));
+		stm.setString(1, H2Queries.hashCode("1234567890"));
 		stm.setString(2, "MyTestFeature");
 		stm.setString(3, "a value");
 		stm.setInt(4, H2Queries.toInt(FeatureLevel.Workflow));
@@ -176,10 +177,10 @@ public class H2Test {
 		l.debug("Generated feature db id: {}", featureId);
 
 		// This second MUST throw an exception because of the unique key of the
-		// portname
+		// feature hashcode
 		e = null;
 		try {
-			stm.setInt(1, 1234567890);
+			stm.setString(1, H2Queries.hashCode("1234567890"));
 			stm.setString(2, "MyTestFeature");
 			stm.setString(3, "a value");
 			stm.setInt(4, H2Queries.toInt(FeatureLevel.Workflow));
@@ -231,7 +232,7 @@ public class H2Test {
 		Connection conn = DriverManager.getConnection(connectionUrl, user, pwd);
 		ResultSet rs = conn.createStatement().executeQuery(H2Queries.SELECT_ALL_FEATURES);
 		while (rs.next()) {
-			l.debug("{} {} {} {} {} {}", new Object[] { rs.getInt(1), rs.getInt(2), rs.getString(3), rs.getString(4),
+			l.debug("{} {} {} {} {} {}", new Object[] { rs.getInt(1), rs.getString(2), rs.getString(3), rs.getString(4),
 					rs.getInt(5), rs.getBoolean(6) });
 		}
 	}

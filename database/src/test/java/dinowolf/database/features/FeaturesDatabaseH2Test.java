@@ -42,10 +42,10 @@ public class FeaturesDatabaseH2Test {
 		
 		Connection conn = DriverManager.getConnection(connectionUrl, user, pwd);
 
-		boolean success = conn.createStatement().execute(H2Queries.CREATE_TABLE_BUNDLE);
-		success = conn.createStatement().execute(H2Queries.CREATE_TABLE_FEATURE);
-		success = conn.createStatement().execute(H2Queries.CREATE_TABLE_PORTPAIR);
-		success = conn.createStatement().execute(H2Queries.CREATE_TABLE_PORTPAIR_FEATURE);
+		conn.createStatement().execute(H2Queries.CREATE_TABLE_BUNDLE);
+		conn.createStatement().execute(H2Queries.CREATE_TABLE_FEATURE);
+		conn.createStatement().execute(H2Queries.CREATE_TABLE_PORTPAIR);
+		conn.createStatement().execute(H2Queries.CREATE_TABLE_PORTPAIR_FEATURE);
 	}
 
 	private String connectionUrl;

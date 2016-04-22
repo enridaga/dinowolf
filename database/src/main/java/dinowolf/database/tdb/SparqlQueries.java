@@ -1,4 +1,6 @@
-package dinowolf.database.schema;
+package dinowolf.database.tdb;
+
+import dinowolf.database.schema.Vocabulary;
 
 public class SparqlQueries {
 	public final static String PREFIXES = "" + "PREFIX rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#>\n"

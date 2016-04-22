@@ -1,4 +1,4 @@
-package dinowolf.database.features;
+package dinowolf.database.tdb;
 
 import java.io.File;
 import java.io.IOException;
@@ -16,8 +16,7 @@ import com.hp.hpl.jena.tdb.TDBFactory;
 import com.hp.hpl.jena.tdb.base.file.Location;
 import com.hp.hpl.jena.update.UpdateAction;
 
-import dinowolf.database.schema.QueryHelper;
-import dinowolf.database.schema.SparqlQueries;
+import dinowolf.database.features.FeaturesDatabase;
 import dinowolf.features.Feature;
 import dinowolf.features.FeatureHashSet;
 import dinowolf.features.FeatureImpl;

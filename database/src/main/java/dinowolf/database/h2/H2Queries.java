@@ -1,5 +1,8 @@
 package dinowolf.database.h2;
 
+import org.apache.commons.codec.digest.DigestUtils;
+
+import dinowolf.features.Feature;
 import dinowolf.features.FeatureLevel;
 
 public class H2Queries {
@@ -17,6 +20,14 @@ public class H2Queries {
 			throw new UnsupportedOperationException("Unsupported enum value");
 		}
 	}
+	
+	public static final String hashCode(Feature feature){
+		return hashCode(feature.serialize());
+	}
+	
+	public static final String hashCode(String string){
+		return DigestUtils.shaHex(string);
+	}
 
 	public static final FeatureLevel toFeatureLevel(int level) {
 		switch (level) {
@@ -33,7 +44,7 @@ public class H2Queries {
 		}
 	}
 
-	public static final String CREATE_TABLE_FEATURE = "CREATE TABLE IF NOT EXISTS FEATURE (ID INT AUTO_INCREMENT PRIMARY KEY, HASHCODE BIGINT NOT NULL, NAME VARCHAR(255) NOT NULL, VALUE VARCHAR(255) NOT NULL, LEVEL INT NOT NULL, TOKENIZABLE BOOLEAN DEFAULT FALSE)"; //, UNIQUE(HASHCODE)
+	public static final String CREATE_TABLE_FEATURE = "CREATE TABLE IF NOT EXISTS FEATURE (ID INT AUTO_INCREMENT PRIMARY KEY, HASHCODE VARCHAR(40) NOT NULL, NAME VARCHAR(255) NOT NULL, VALUE VARCHAR(255) NOT NULL, LEVEL INT NOT NULL, TOKENIZABLE BOOLEAN DEFAULT FALSE, UNIQUE(HASHCODE))"; //, 
 	public static final String CREATE_TABLE_BUNDLE = "CREATE TABLE IF NOT EXISTS BUNDLE (ID INT AUTO_INCREMENT PRIMARY KEY , FILE VARCHAR(255), UNIQUE(FILE))";
 	public static final String CREATE_TABLE_PORTPAIR = "CREATE TABLE IF NOT EXISTS PORTPAIR (ID INT AUTO_INCREMENT PRIMARY KEY, BUNDLE INT NOT NULL, NAME VARCHAR(255) NOT NULL, UNIQUE(NAME), FOREIGN KEY (BUNDLE) REFERENCES BUNDLE(ID) ON DELETE CASCADE )";
 	public static final String CREATE_TABLE_PORTPAIR_FEATURE = "CREATE TABLE IF NOT EXISTS PORTPAIR_FEATURE (PORTPAIR INT NOT NULL, FEATURE INT NOT NULL, FOREIGN KEY (PORTPAIR) REFERENCES PORTPAIR(ID) ON DELETE CASCADE, FOREIGN KEY (FEATURE) REFERENCES FEATURE(ID) ON DELETE CASCADE, PRIMARY KEY (PORTPAIR,FEATURE))";
