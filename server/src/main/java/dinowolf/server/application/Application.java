@@ -21,9 +21,9 @@ public class Application extends ResourceConfig implements ServletContextListene
 	public static final String _ParamMANAGER = "dinowolf.manager";
 
 	public Application() {
-		packages("dinowolf.server.application.rest");
+		packages("dinowolf.server.application.rest", "dinowolf.server.application.writers");
 	}
-	
+
 	@Override
 	public void contextInitialized(ServletContextEvent sce) {
 		log.info("Initializing context.");

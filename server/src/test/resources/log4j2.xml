@@ -9,6 +9,7 @@
 	<Loggers>
 		<Logger name="org.apache.log4j.xml" level="info" />
 		<Logger name="dinowolf" level="debug" />
+		<Logger name="org.eclipse.jetty" level="trace" />
 		<Logger name="dinowolf.database" level="trace" />
 		<Root level="info">
 			<AppenderRef ref="STDOUT" />

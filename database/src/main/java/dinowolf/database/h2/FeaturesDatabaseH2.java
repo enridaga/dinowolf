@@ -35,18 +35,20 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 			l.error("Error loading JDBC driver", e);
 		}
 	}
-
+	
 	public FeaturesDatabaseH2(File location, String user, String password) {
-		this(location, "dinowolf", user, password);
+		this(location, "dinowolf", user, password, "MVCC=TRUE;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO");
 	}
 
 	public FeaturesDatabaseH2(File location, String dbname, String user, String password) {
-		this.connectionString = "jdbc:h2:file:" + location.getAbsolutePath() + "/" + dbname;
+		this(location, dbname, user, password, "MVCC=TRUE;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO");
+	}
+	public FeaturesDatabaseH2(File location, String dbname, String user, String password, String options) {
+		this.connectionString = "jdbc:h2:file:" + location.getAbsolutePath() + "/" + dbname + ";" + options;
 		this.username = user;
 		this.password = password;
 		
-		try {
-			Connection conn = getConnection();
+		try (Connection conn = getConnection()){
 			conn.setAutoCommit(false);
 			conn.createStatement().execute(H2Queries.CREATE_TABLE_BUNDLE);
 			conn.createStatement().execute(H2Queries.CREATE_TABLE_FEATURE);

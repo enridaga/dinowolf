@@ -29,6 +29,11 @@
 			<groupId>org.eclipse.jetty</groupId>
 			<artifactId>jetty-webapp</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.eclipse.jetty</groupId>
+			<artifactId>jetty-rewrite</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.thetransactioncompany</groupId>
 			<artifactId>cors-filter</artifactId>
@@ -64,6 +69,10 @@
 		<dependency>
 			<groupId>com.google.code.gson</groupId>
 			<artifactId>gson</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.github.spullara.mustache.java</groupId>
+			<artifactId>compiler</artifactId>
 		</dependency>
 	</dependencies>
 	<build>
@@ -101,9 +110,16 @@
 					<systemProperties>
 						<systemProperty>
 							<name>log4j.configurationFile</name>
-							<value>file:./src/test/resources/log4j2.xml</value>
+							<value>src/test/resources/log4j2.xml</value>
 						</systemProperty>
 					</systemProperties>
+					<webApp>
+						<overrideDescriptor>src/test/resources/jetty-override-web.xml</overrideDescriptor>
+						<resourceBases>
+							<resourceBase>src/main/webapp/static,ui-src</resourceBase>
+						</resourceBases>
+					</webApp>
+					<jettyXml>src/test/resources/jetty.xml</jettyXml>
 				</configuration>
 			</plugin>
 		</plugins>
@@ -119,6 +135,15 @@
 				<directory>src/main/webapp</directory>
 				<includes>
 					<include>**/**</include>
+				</includes>
+			</resource>
+			<resource>
+				<targetPath>static/ui</targetPath>
+				<directory>ui-src</directory>
+				<includes>
+					<include>**/*.js</include>
+					<include>**/*.html</include>
+					<include>**/*.css</include>
 				</includes>
 			</resource>
 		</resources>

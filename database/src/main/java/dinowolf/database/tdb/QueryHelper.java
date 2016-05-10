@@ -2,8 +2,8 @@ package dinowolf.database.tdb;
 
 import org.apache.commons.lang3.builder.HashCodeBuilder;
 
-import com.hp.hpl.jena.rdf.model.Resource;
-import com.hp.hpl.jena.rdf.model.ResourceFactory;
+import org.apache.jena.rdf.model.Resource;
+import org.apache.jena.rdf.model.ResourceFactory;
 
 import dinowolf.database.schema.Vocabulary;
 import dinowolf.features.Feature;
