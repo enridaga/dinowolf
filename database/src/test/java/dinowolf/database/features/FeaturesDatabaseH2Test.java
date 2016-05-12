@@ -18,6 +18,7 @@ import org.junit.rules.TestName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dinowolf.annotation.FromTo;
 import dinowolf.database.h2.FeaturesDatabaseH2;
 import dinowolf.database.h2.H2Queries;
 import dinowolf.database.h2.H2Test;
@@ -67,12 +68,11 @@ public class FeaturesDatabaseH2Test {
 		FeaturesMap map = FeaturesMapExtractor.extract(bundle);
 		h2.put(bundleFile, map);
 		
-		FeaturesMap read = h2.getFeatures(bundleFile);
+		FeaturesMap read = h2.getFeatures(bundleFile, bundle);
 		
-		for(Entry<String,FeatureSet> entry : read.entrySet()){
-			String port = entry.getKey();
+		for(Entry<FromTo,FeatureSet> entry : read.entrySet()){
+			FromTo port = entry.getKey();
 			Assert.assertTrue(map.containsKey(port));
-			
 			FeatureSet fs1 = map.get(port);
 			FeatureSet fs2 = read.get(port);
 			Assert.assertTrue(fs2.containsAll(fs1));

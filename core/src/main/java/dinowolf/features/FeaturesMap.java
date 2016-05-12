@@ -3,11 +3,13 @@ package dinowolf.features;
 import java.util.Map;
 import java.util.Set;
 
-public interface FeaturesMap extends Map<String,FeatureSet>{
+import dinowolf.annotation.FromTo;
 
-	public Set<String> getPortPairs();
+public interface FeaturesMap extends Map<FromTo,FeatureSet>{
 
-	public FeatureSet getFeatures(String portPair);
+	public Set<FromTo> getPortPairs();
+
+	public FeatureSet getFeatures(FromTo portPair);
 
 	public FeatureSet allFeatures();
 }

@@ -54,14 +54,14 @@ public class FeaturesDatabaseTDBTest {
 		FeaturesMap map = FeaturesMapExtractor.extract(bundle);
 		Assert.assertTrue(features.getFeatures().size() == 0);
 
-		FeaturesMap fm = features.getFeatures(bundleFile);
+		FeaturesMap fm = features.getFeatures(bundleFile, bundle);
 		Assert.assertTrue(fm.size() == 0);
 
 		l.debug("Putting features of workflow {} ({} features)", bundleFile, map.allFeatures().size());
 		features.put(bundleFile, map);
 
 		l.debug("Loading features of workflow {}", bundleFile);
-		FeaturesMap mapGot = features.getFeatures(bundleFile);
+		FeaturesMap mapGot = features.getFeatures(bundleFile, bundle);
 		Assert.assertTrue(map.size() == mapGot.size());
 
 		//

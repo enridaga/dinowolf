@@ -4,7 +4,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Set;
 
-public class FeaturesHashMap extends HashMap<String, FeatureSet> implements FeaturesMap {
+import dinowolf.annotation.FromTo;
+
+public class FeaturesHashMap extends HashMap<FromTo, FeatureSet> implements FeaturesMap {
 
 	/**
 	 * 
@@ -14,14 +16,14 @@ public class FeaturesHashMap extends HashMap<String, FeatureSet> implements Feat
 	/**
 	 * read only
 	 */
-	public Set<String> getPortPairs() {
+	public Set<FromTo> getPortPairs() {
 		return Collections.unmodifiableSet(keySet());
 	}
 
 	/**
 	 * Modifiable
 	 */
-	public FeatureSet getFeatures(String portPair) {
+	public FeatureSet getFeatures(FromTo portPair) {
 		return get(portPair);
 	}
 

@@ -19,9 +19,9 @@ public class FeaturesMapExtractor {
 
 	public final static FeaturesHashMap extract( WorkflowBundle bundle) {
 		FeaturesHashMap featuresMap = new FeaturesHashMap();
-		for (FromTo io : C.collect(bundle)) {
+		for (FromTo io : C.getList(bundle)) {
 			FeatureHashSet fff = E.extract(io);
-			featuresMap.put(io.getId(), fff);
+			featuresMap.put(io, fff);
 			l.trace("{}: {} features extracted", io.getId(), fff.size());
 		}
 		

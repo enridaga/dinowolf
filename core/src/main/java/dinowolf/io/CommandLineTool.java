@@ -12,6 +12,7 @@ import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.io.ReaderException;
 import org.apache.taverna.scufl2.api.io.WorkflowBundleIO;
 
+import dinowolf.annotation.FromTo;
 import dinowolf.features.Feature;
 import dinowolf.features.FeaturesMap;
 import dinowolf.features.FeaturesMapExtractor;
@@ -90,8 +91,8 @@ public class CommandLineTool {
 
 			WorkflowBundle wb = io.readBundle(f, null);
 			FeaturesMap ex = FeaturesMapExtractor.generate(wb);
-			Set<String> inout = ex.getPortPairs();
-			for (String x : inout) {
+			Set<FromTo> inout = ex.getPortPairs();
+			for (FromTo x : inout) {
 				P.println(x);
 			}
 
@@ -145,8 +146,8 @@ public class CommandLineTool {
 
 			WorkflowBundle wb = io.readBundle(f, null);
 			FeaturesMap ex = FeaturesMapExtractor.generate(wb);
-			Set<String> inout = ex.getPortPairs();
-			for (String x : inout) {
+			Set<FromTo> inout = ex.getPortPairs();
+			for (FromTo x : inout) {
 				P.println(x);
 				for (Feature y : ex.getFeatures(x)) {
 					P.print(" - ");

@@ -29,7 +29,7 @@ public class FeaturesExtractorTest {
 				__f("A_graphical_plot_of_White_Ash__Beech__and_Hemlock_populations_in_Onondaga_County__NY-v1.wfbundle"),
 				null);
 		FromToCollector coll = new FromToCollector();
-		List<FromTo> ft = coll.collect(wb);
+		List<FromTo> ft = coll.getList(wb);
 		for (FromTo i : ft) {
 			l.info(" > {}", i);
 			l.info("{}",E.extract(i));

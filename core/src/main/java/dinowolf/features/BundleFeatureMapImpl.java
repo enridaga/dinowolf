@@ -6,6 +6,8 @@ import java.util.Set;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 
+import dinowolf.annotation.FromTo;
+
 public class BundleFeatureMapImpl implements BundleFeaturesMap {
 
 	private FeaturesMap map;
@@ -17,12 +19,12 @@ public class BundleFeatureMapImpl implements BundleFeaturesMap {
 	}
 
 	@Override
-	public Set<String> getPortPairs() {
+	public Set<FromTo> getPortPairs() {
 		return map.getPortPairs();
 	}
 
 	@Override
-	public FeatureSet getFeatures(String portPair) {
+	public FeatureSet getFeatures(FromTo portPair) {
 		return map.getFeatures(portPair);
 	}
 	
@@ -37,7 +39,7 @@ public class BundleFeatureMapImpl implements BundleFeaturesMap {
 	}
 
 	@Override
-	public FeatureSet put(String key, FeatureSet value) {
+	public FeatureSet put(FromTo key, FeatureSet value) {
 		return map.put(key, value);
 	}
 
@@ -72,7 +74,7 @@ public class BundleFeatureMapImpl implements BundleFeaturesMap {
 	}
 
 	@Override
-	public void putAll(Map<? extends String, ? extends FeatureSet> m) {
+	public void putAll(Map<? extends FromTo, ? extends FeatureSet> m) {
 		map.putAll(m);
 	}
 
@@ -82,7 +84,7 @@ public class BundleFeatureMapImpl implements BundleFeaturesMap {
 	}
 
 	@Override
-	public Set<String> keySet() {
+	public Set<FromTo> keySet() {
 		return map.keySet();
 	}
 
@@ -92,7 +94,7 @@ public class BundleFeatureMapImpl implements BundleFeaturesMap {
 	}
 
 	@Override
-	public Set<java.util.Map.Entry<String, FeatureSet>> entrySet() {
+	public Set<java.util.Map.Entry<FromTo, FeatureSet>> entrySet() {
 		return map.entrySet();
 	}
 }

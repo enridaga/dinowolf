@@ -29,7 +29,7 @@ public class FromToCollectorTest {
 		WorkflowBundle wb = io.readBundle(
 				__f("A_graphical_plot_of_White_Ash__Beech__and_Hemlock_populations_in_Onondaga_County__NY-v1.wfbundle"),
 				null);
-		List<FromTo> ft = C.collect(wb);
+		List<FromTo> ft = C.getList(wb);
 		for (FromTo i : ft) {
 			l.info(" > {}", i);
 		}

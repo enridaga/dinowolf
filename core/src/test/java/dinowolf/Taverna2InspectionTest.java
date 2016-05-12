@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.jena.query.Dataset;
 import org.apache.taverna.scufl2.annotation.AnnotationTools;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
 import org.apache.taverna.scufl2.api.common.Child;
@@ -25,8 +26,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.apache.jena.query.Dataset;
-
+import dinowolf.annotation.FromTo;
 import dinowolf.features.Feature;
 import dinowolf.features.FeaturesMap;
 import dinowolf.features.FeaturesMapExtractor;
@@ -136,7 +136,7 @@ public class Taverna2InspectionTest {
 			System.out.println(c.getConfigures());
 			// System.out.println(c.getJson());
 		}
-		for (String i : ex.getPortPairs()) {
+		for (FromTo i : ex.getPortPairs()) {
 			System.out.println(i);
 			for (Feature f : ex.getFeatures(i)) {
 				System.out.print(' ');
