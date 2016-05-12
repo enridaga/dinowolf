@@ -6,10 +6,10 @@ public class FeatureImpl implements Feature {
 	private boolean t;
 	private String v;
 	private String n;
-	private FeatureLevel l;
+	private FeatureDepth l;
 	private int hashCode;
 
-	public FeatureImpl(String name, String value, FeatureLevel level, boolean tokenizable) {
+	public FeatureImpl(String name, String value, FeatureDepth level, boolean tokenizable) {
 		t = tokenizable;
 		n = name;
 		v = value;
@@ -18,7 +18,7 @@ public class FeatureImpl implements Feature {
 				.toHashCode();
 	}
 
-	public FeatureImpl(String name, String value, FeatureLevel level) {
+	public FeatureImpl(String name, String value, FeatureDepth level) {
 		this(name, value, level, false);
 	}
 
@@ -62,7 +62,7 @@ public class FeatureImpl implements Feature {
 	}
 
 	@Override
-	public FeatureLevel getLevel() {
+	public FeatureDepth getLevel() {
 		return l;
 	}
 

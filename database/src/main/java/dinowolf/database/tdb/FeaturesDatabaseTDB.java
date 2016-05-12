@@ -20,7 +20,7 @@ import dinowolf.database.features.FeaturesDatabase;
 import dinowolf.features.Feature;
 import dinowolf.features.FeatureHashSet;
 import dinowolf.features.FeatureImpl;
-import dinowolf.features.FeatureLevel;
+import dinowolf.features.FeatureDepth;
 import dinowolf.features.FeatureSet;
 import dinowolf.features.FeaturesHashMap;
 import dinowolf.features.FeaturesMap;
@@ -95,7 +95,7 @@ public class FeaturesDatabaseTDB implements FeaturesDatabase {
 			QuerySolution qs = rs.next();
 			Feature f = new FeatureImpl(qs.get("name").asLiteral().getLexicalForm(),
 					qs.get("value").asLiteral().getLexicalForm(),
-					FeatureLevel.valueOf(qs.get("level").asLiteral().getLexicalForm()),
+					FeatureDepth.valueOf(qs.get("level").asLiteral().getLexicalForm()),
 					qs.get("tokenizable").asLiteral().getLexicalForm().equals("true"));
 			fsm.add(f);
 		}
@@ -111,7 +111,7 @@ public class FeaturesDatabaseTDB implements FeaturesDatabase {
 			QuerySolution qs = rs.next();
 			Feature f = new FeatureImpl(qs.get("name").asLiteral().getLexicalForm(),
 					qs.get("value").asLiteral().getLexicalForm(),
-					FeatureLevel.valueOf(qs.get("level").asLiteral().getLexicalForm()),
+					FeatureDepth.valueOf(qs.get("level").asLiteral().getLexicalForm()),
 					qs.get("tokenizable").asLiteral().getLexicalForm().equals("true"));
 			String fromTo = qs.get("fromTo").asLiteral().getLexicalForm();
 			if (!fsm.containsKey(fromTo)) {

@@ -3,10 +3,10 @@ package dinowolf.database.h2;
 import org.apache.commons.codec.digest.DigestUtils;
 
 import dinowolf.features.Feature;
-import dinowolf.features.FeatureLevel;
+import dinowolf.features.FeatureDepth;
 
 public class H2Queries {
-	public static final int toInt(FeatureLevel level) {
+	public static final int toInt(FeatureDepth level) {
 		switch (level) {
 		case Processor:
 			return 'P';
@@ -29,16 +29,16 @@ public class H2Queries {
 		return DigestUtils.shaHex(string);
 	}
 
-	public static final FeatureLevel toFeatureLevel(int level) {
+	public static final FeatureDepth toFeatureLevel(int level) {
 		switch (level) {
 		case 'P':
-			return FeatureLevel.Processor;
+			return FeatureDepth.Processor;
 		case 'F':
-			return FeatureLevel.FromToPorts;
+			return FeatureDepth.FromToPorts;
 		case 'W':
-			return FeatureLevel.Workflow;
+			return FeatureDepth.Workflow;
 		case 'S':
-			return FeatureLevel.SinglePort;
+			return FeatureDepth.SinglePort;
 		default:
 			throw new UnsupportedOperationException("Unsupported enum value");
 		}

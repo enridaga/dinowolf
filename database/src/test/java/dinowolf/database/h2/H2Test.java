@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import dinowolf.features.Feature;
 import dinowolf.features.FeatureImpl;
-import dinowolf.features.FeatureLevel;
+import dinowolf.features.FeatureDepth;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class H2Test {
@@ -168,7 +168,7 @@ public class H2Test {
 		stm.setString(1, H2Queries.hashCode("1234567890"));
 		stm.setString(2, "MyTestFeature");
 		stm.setString(3, "a value");
-		stm.setInt(4, H2Queries.toInt(FeatureLevel.Workflow));
+		stm.setInt(4, H2Queries.toInt(FeatureDepth.Workflow));
 		stm.setInt(5, 1);
 		stm.execute();
 		generated = stm.getGeneratedKeys();
@@ -183,7 +183,7 @@ public class H2Test {
 			stm.setString(1, H2Queries.hashCode("1234567890"));
 			stm.setString(2, "MyTestFeature");
 			stm.setString(3, "a value");
-			stm.setInt(4, H2Queries.toInt(FeatureLevel.Workflow));
+			stm.setInt(4, H2Queries.toInt(FeatureDepth.Workflow));
 			stm.setInt(5, 1);
 			stm.execute();
 		} catch (Exception ex) {
@@ -195,7 +195,7 @@ public class H2Test {
 		stm.setInt(1, 1234567891);
 		stm.setString(2, "MyTestFeature2");
 		stm.setString(3, "a value");
-		stm.setInt(4, H2Queries.toInt(FeatureLevel.Workflow));
+		stm.setInt(4, H2Queries.toInt(FeatureDepth.Workflow));
 		stm.setInt(5, 1);
 		stm.execute();
 		generated = stm.getGeneratedKeys();
@@ -242,9 +242,9 @@ public class H2Test {
 		test2_createTables();
 
 		List<Feature> fff = new ArrayList<Feature>();
-		fff.add(new FeatureImpl("A1", "a val 1", FeatureLevel.Processor));
-		fff.add(new FeatureImpl("A2", "a val 2", FeatureLevel.Workflow, true));
-		fff.add(new FeatureImpl("A3", "a val 3", FeatureLevel.FromToPorts, false));
+		fff.add(new FeatureImpl("A1", "a val 1", FeatureDepth.Processor));
+		fff.add(new FeatureImpl("A2", "a val 2", FeatureDepth.Workflow, true));
+		fff.add(new FeatureImpl("A3", "a val 3", FeatureDepth.FromToPorts, false));
 
 		Class.forName("org.h2.Driver");
 		Connection conn = DriverManager.getConnection(connectionUrl, user, pwd);

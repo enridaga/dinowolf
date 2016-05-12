@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import dinowolf.features.Feature;
 import dinowolf.features.FeatureImpl;
-import dinowolf.features.FeatureLevel;
+import dinowolf.features.FeatureDepth;
 
 public class H2InsertStressTest {
 
@@ -55,7 +55,7 @@ public class H2InsertStressTest {
 		int x = 0;
 		try {
 			for (x = 0; x < max; x++) {
-				Feature f = new FeatureImpl("F" + x + Math.random(), "Value value value " + x, FeatureLevel.Workflow, true);
+				Feature f = new FeatureImpl("F" + x + Math.random(), "Value value value " + x, FeatureDepth.Workflow, true);
 				stm.setInt(1, f.hashCode());
 				stm.setString(2, f.getName());
 				stm.setString(3, f.getValue());

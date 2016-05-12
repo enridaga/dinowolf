@@ -148,10 +148,10 @@ public class Taverna2InspectionTest {
 	@Test
 	public void annotations() throws ReaderException, IOException {
 		WorkflowBundleIO io = new WorkflowBundleIO();
-		AnnotationTools ann = new AnnotationTools();
+		//AnnotationTools ann = new AnnotationTools();
 		
 		final WorkflowBundle wb = io.readBundle(__f("3Drec-v1.wfbundle"), null);
-		//		 The description of a workflow (as I can see it on the myexperiment portal)
+		//	The description of a workflow (as I can see it on the myexperiment portal)
 
 		// Scufl2Tools scufl2Tools = new Scufl2Tools();
 		for (Annotation a: wb.getAnnotations()) {

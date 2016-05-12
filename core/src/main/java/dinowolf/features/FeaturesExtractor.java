@@ -1,11 +1,13 @@
 package dinowolf.features;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.configurations.Configuration;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
@@ -16,6 +18,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.JsonNode;
 
 import dinowolf.annotation.FromTo;
+import dinowolf.io.AnnotationHelper;
 
 class FeaturesExtractor {
 	private static final Logger l = LoggerFactory.getLogger(FeaturesExtractor.class);
@@ -26,12 +29,23 @@ class FeaturesExtractor {
 	}
 
 	public FeatureHashSet extract(FromTo inOut) {
+		AnnotationHelper anno;
+		try {
+			anno = new AnnotationHelper(inOut.processor().getParent().getParent());
+		} catch (IOException e1) {
+			l.error("", e1);
+			throw new RuntimeException("Cannot access bundle annotations!", e1);
+		}
+		
 		FeatureHashSet features = new FeatureHashSet();
 		// Processor
 		features.add(F.ProcessorType(inOut.processor().getType().toString()));
 		features.add(F.ProcessorName(inOut.processor().getName()));
+		features.add(F.ProcessorTitle(anno.getTitle(inOut.processor())));
+		features.add(F.ProcessorDescription(anno.getDescription(inOut.processor())));
+		
 		// Configuration of this processor
-		// ...
+		// TODO
 
 		// Focus ports
 		features.add(F.FromPort(inOut.from().getName()));

@@ -32,6 +32,7 @@ public class WorkflowResource extends AbstractResource {
 		}
 		return id;
 	}
+	
 	@GET
 	public Response get() throws IOException {
 		log.debug("GET {}", id);
@@ -40,7 +41,7 @@ public class WorkflowResource extends AbstractResource {
 	}
 
 	@GET
-	@Path("features")
+	@Path("/features")
 	public Response features() throws IOException {
 		log.debug("GET {} features", id);
 		WorkflowBundle bundle = getManager().get(getId());

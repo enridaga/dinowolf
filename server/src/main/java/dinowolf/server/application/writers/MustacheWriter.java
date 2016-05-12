@@ -16,6 +16,7 @@ import com.github.mustachejava.MustacheFactory;
 
 public abstract class MustacheWriter<T> extends PackedWriter<T> {
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public void writeTo(Object t, Class type, Type genericType, Annotation[] annotations, MediaType mediaType,
 			MultivaluedMap httpHeaders, OutputStream entityStream) throws IOException, WebApplicationException {
