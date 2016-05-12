@@ -64,14 +64,14 @@ class FeaturesExtractor {
 
 		// Other ports
 		for (InputProcessorPort in : inOut.processor().getInputPorts()) {
-			if (!in.getName().equals(inOut.from().getName())) {
+			if (!in.equals(inOut.from()) && !in.equals(inOut.to())) {
 				features.add(F.OtherInputPortName(in.getName()));
 				safeAdd(features, F.OtherInputPortTitle(anno.getTitle(in)));
 				safeAdd(features, F.OtherInputPortDescription(anno.getDescription(in)));
 			}
 		}
 		for (OutputProcessorPort out : inOut.processor().getOutputPorts()) {
-			if (!out.getName().equals(inOut.to().getName())) {
+			if (!out.equals(inOut.from()) && !out.equals(inOut.to())) {
 				features.add(F.OtherOutputPortName(out.getName()));
 				safeAdd(features, F.OtherOutputPortTitle(anno.getTitle(out)));
 				safeAdd(features, F.OtherOutputPortDescription(anno.getDescription(out)));
