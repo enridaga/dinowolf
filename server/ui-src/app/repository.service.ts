@@ -1,21 +1,15 @@
 import {Injectable} from 'angular2/core';
 import {Observable} from 'rxjs/Rx';
+import {Bundle} from './app.models';
 import { Http, Headers, RequestOptions, Response } from 'angular2/http';
-
-export class Bundle {
-    constructor(public id: string, public name: string) { }
-}
 
 @Injectable()
 export class RepositoryService {
     getBundles() {
-        //return bundlesPromise;
-        // return an observable
         let theHeaders = new Headers();
         theHeaders.append("Accept", "application/json");
         let options = new RequestOptions({ headers: theHeaders });
         let observable = this.http.get('/service/repository', options);
-        //console.log(observable);
         return observable
             .map(this.extractData)
             .catch(this.handleError);

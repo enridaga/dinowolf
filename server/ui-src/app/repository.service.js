@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'rxjs/Rx', 'angular2/http'], function(exports_1, context_1) {
+System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,8 +10,8 @@ System.register(['angular2/core', 'rxjs/Rx', 'angular2/http'], function(exports_
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, Rx_1, http_1;
-    var Bundle, RepositoryService;
+    var core_1, Rx_1, app_models_1, http_1;
+    var RepositoryService;
     return {
         setters:[
             function (core_1_1) {
@@ -20,31 +20,23 @@ System.register(['angular2/core', 'rxjs/Rx', 'angular2/http'], function(exports_
             function (Rx_1_1) {
                 Rx_1 = Rx_1_1;
             },
+            function (app_models_1_1) {
+                app_models_1 = app_models_1_1;
+            },
             function (http_1_1) {
                 http_1 = http_1_1;
             }],
         execute: function() {
-            Bundle = (function () {
-                function Bundle(id, name) {
-                    this.id = id;
-                    this.name = name;
-                }
-                return Bundle;
-            }());
-            exports_1("Bundle", Bundle);
             RepositoryService = (function () {
                 function RepositoryService(http) {
                     this.http = http;
                     //console.log('Task Service created.', http);
                 }
                 RepositoryService.prototype.getBundles = function () {
-                    //return bundlesPromise;
-                    // return an observable
                     var theHeaders = new http_1.Headers();
                     theHeaders.append("Accept", "application/json");
                     var options = new http_1.RequestOptions({ headers: theHeaders });
                     var observable = this.http.get('/service/repository', options);
-                    //console.log(observable);
                     return observable
                         .map(this.extractData)
                         .catch(this.handleError);
@@ -57,7 +49,7 @@ System.register(['angular2/core', 'rxjs/Rx', 'angular2/http'], function(exports_
                     var result = [];
                     if (body) {
                         body.forEach(function (name) {
-                            result.push(new Bundle(name, name));
+                            result.push(new app_models_1.Bundle(name, name));
                         });
                     }
                     return result || new Array();

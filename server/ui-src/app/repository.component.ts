@@ -1,5 +1,6 @@
 import {Component} from 'angular2/core';
-import {RepositoryService, Bundle} from './repository.service';
+import {RepositoryService} from './repository.service';
+import {Bundle} from './app.models';
 import {Router} from 'angular2/router';
 @Component({
     template: `

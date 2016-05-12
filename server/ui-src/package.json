@@ -8,7 +8,7 @@
     "tsc": "tsc",
     "tsc:w": "tsc -w",
     "typings": "typings",
-    "build": "tsc && concurrently \"npm run tsc:w\""
+    "watch": "tsc && concurrently \"npm run tsc:w\""
   },
   "license": "",
   "dependencies": {
