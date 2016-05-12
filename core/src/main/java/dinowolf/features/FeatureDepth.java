@@ -1,5 +1,5 @@
 package dinowolf.features;
 
 public enum FeatureDepth {
-	Workflow,Processor,Activity,SinglePort,FromToPorts, From, To
+	Workflow,Processor,Activity,OtherPort,FromToPorts, From, To
 }

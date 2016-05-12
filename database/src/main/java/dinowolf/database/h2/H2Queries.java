@@ -14,7 +14,7 @@ public class H2Queries {
 			return 'F';
 		case Workflow:
 			return 'W';
-		case SinglePort:
+		case OtherPort:
 			return 'S';
 		default:
 			throw new UnsupportedOperationException("Unsupported enum value");
@@ -38,7 +38,7 @@ public class H2Queries {
 		case 'W':
 			return FeatureDepth.Workflow;
 		case 'S':
-			return FeatureDepth.SinglePort;
+			return FeatureDepth.OtherPort;
 		default:
 			throw new UnsupportedOperationException("Unsupported enum value");
 		}

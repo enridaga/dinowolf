@@ -17,18 +17,19 @@ public class FromToImpl implements FromTo {
 
 	static {
 		types = new HashMap<String, Class<?>>();
-		types.put("Input", InputProcessorPort.class);
-		types.put("Output", OutputProcessorPort.class);
+		types.put("I", InputProcessorPort.class);
+		types.put("O", OutputProcessorPort.class);
 	}
 
 	private Workflow workflow;
 	private Processor processor;
 	private Port from;
 	private Port to;
-	private String fromType = null;
-	private String toType = null;
+	private String roleFrom = null;
+	private String roleTo = null;
 	private String id = null;
 	private int hashCode;
+	private String shortName;
 
 	/**
 	 * 
@@ -43,18 +44,21 @@ public class FromToImpl implements FromTo {
 		this.from = from;
 		this.to = to;
 		
-		String[] s = new String[] { workflow.getName(), processor.getName(), "from:" + from.getName(),
-				"to:" + to.getName() };
-		id = StringUtils.join(s, '/');
-		this.hashCode = new HashCodeBuilder().append(FromTo.class).append(id).toHashCode();
 		for (Entry<String, Class<?>> e : types.entrySet()) {
 			if (e.getValue().isAssignableFrom(this.from.getClass())) {
-				fromType = e.getKey();
+				roleFrom = e.getKey();
 			}
 			if (e.getValue().isAssignableFrom(this.to.getClass())) {
-				toType = e.getKey();
+				roleTo = e.getKey();
 			}
 		}
+		
+		this.shortName = new StringBuilder().append(processor.getName()).append("/").append(roleFrom).append(roleTo).append(':').append(from.getName()).append(":")
+				.append(to.getName()).toString();
+		String[] s = new String[] { workflow.getName(), shortName };
+		id = StringUtils.join(s, '/');
+		this.hashCode = new HashCodeBuilder().append(FromTo.class).append(id).toHashCode();
+		
 	}
 
 	@Override
@@ -68,13 +72,18 @@ public class FromToImpl implements FromTo {
 	}
 
 	@Override
+	public String shortName() {
+		return shortName;
+	}
+
+	@Override
 	public String roleFrom() {
-		return fromType;
+		return roleFrom;
 	}
 
 	@Override
 	public String roleTo() {
-		return toType;
+		return roleTo;
 	}
 
 	@Override
@@ -88,14 +97,14 @@ public class FromToImpl implements FromTo {
 	}
 
 	public String toString() {
-		return id;
+		return shortName;
 	}
 
 	@Override
 	public String getId() {
 		return id;
 	};
-	
+
 	@Override
 	public int hashCode() {
 		return hashCode;

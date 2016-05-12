@@ -10,6 +10,10 @@ public interface FromTo {
 	
 	public Port from();
 	
+	/**
+	 * Is it Input or Output?
+	 * @return
+	 */
 	public String roleFrom();
 
 	public Port to();
@@ -18,6 +22,8 @@ public interface FromTo {
 
 	public Processor processor();
 
+	public String shortName();
+	
 	public Workflow workflow();
 
 //	public Set<Feature> features();

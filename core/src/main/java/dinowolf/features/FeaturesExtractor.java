@@ -7,7 +7,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.configurations.Configuration;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
@@ -28,6 +27,11 @@ class FeaturesExtractor {
 
 	}
 
+	private void safeAdd(FeatureHashSet features, Feature feature){
+		if(feature != null){
+			features.add(feature);
+		}
+	}
 	public FeatureHashSet extract(FromTo inOut) {
 		AnnotationHelper anno;
 		try {
@@ -36,41 +40,62 @@ class FeaturesExtractor {
 			l.error("", e1);
 			throw new RuntimeException("Cannot access bundle annotations!", e1);
 		}
-		
+
 		FeatureHashSet features = new FeatureHashSet();
+
 		// Processor
 		features.add(F.ProcessorType(inOut.processor().getType().toString()));
 		features.add(F.ProcessorName(inOut.processor().getName()));
-		features.add(F.ProcessorTitle(anno.getTitle(inOut.processor())));
-		features.add(F.ProcessorDescription(anno.getDescription(inOut.processor())));
-		
-		// Configuration of this processor
-		// TODO
+		safeAdd(features, F.ProcessorTitle(anno.getTitle(inOut.processor())));
+		safeAdd(features, F.ProcessorDescription(anno.getDescription(inOut.processor())));
 
-		// Focus ports
+		// From
 		features.add(F.FromPort(inOut.from().getName()));
+		safeAdd(features, F.FromPortTitle(anno.getTitle(inOut.from())));
+		safeAdd(features, F.FromPortDescription(anno.getDescription(inOut.from())));
+
+		// To
 		features.add(F.ToPort(inOut.to().getName()));
+		safeAdd(features, F.ToPortTitle(anno.getTitle(inOut.to())));
+		safeAdd(features, F.ToPortDescription(anno.getDescription(inOut.to())));
+
 		// Roles
-		features.add(F.FromToRoles(inOut.roleFrom() + inOut.roleTo()));
+		features.add(F.FromToType(inOut.roleFrom() + inOut.roleTo()));
 
 		// Other ports
-		for (InputProcessorPort in : inOut.processor().getInputPorts())
-			if (!in.getName().equals(inOut.from().getName()))
-				features.add(F.InputPortName(in.getName()));
-
-		for (OutputProcessorPort out : inOut.processor().getOutputPorts())
-			if (!out.getName().equals(inOut.to().getName()))
-				features.add(F.OutputPortName(out.getName()));
-
-		// Activities
+		for (InputProcessorPort in : inOut.processor().getInputPorts()) {
+			if (!in.getName().equals(inOut.from().getName())) {
+				features.add(F.OtherInputPortName(in.getName()));
+				safeAdd(features, F.OtherInputPortTitle(anno.getTitle(in)));
+				safeAdd(features, F.OtherInputPortDescription(anno.getDescription(in)));
+			}
+		}
+		for (OutputProcessorPort out : inOut.processor().getOutputPorts()) {
+			if (!out.getName().equals(inOut.to().getName())) {
+				features.add(F.OtherOutputPortName(out.getName()));
+				safeAdd(features, F.OtherOutputPortTitle(anno.getTitle(out)));
+				safeAdd(features, F.OtherOutputPortDescription(anno.getDescription(out)));
+			}
+		}
+		// Profile dependant features
 		for (Profile p : inOut.workflow().getParent().getProfiles()) {
+			// Profile annotations? TODO
+			
+			// Configuration of the processor for this profile
+			for(Configuration c: inOut.processor().getConfigurations(p)){
+				features.addAll(jsonToFeature(FeatureDepth.Processor, inOut, c.getJson(), new ArrayList<String>()));
+			}
+			
+			// Activities
 			features.add(F.ActivityType(inOut.processor().getActivity(p).getType().toString()));
 			features.add(F.ActivityName(inOut.processor().getActivity(p).getName()));
+			safeAdd(features, F.ActivityTitle(anno.getTitle(inOut.processor().getActivity(p))));
+			safeAdd(features, F.ActivityDescription(anno.getDescription(inOut.processor().getActivity(p))));
 
 			// Configuration of activities of this processor
 			try {
 				Configuration c = inOut.processor().getActivityConfiguration(p);
-				features.addAll(jsonToFeature(inOut, c.getJson(), new ArrayList<String>()));
+				features.addAll(jsonToFeature(FeatureDepth.Activity, inOut, c.getJson(), new ArrayList<String>()));
 			} catch (Exception e) {
 				// No configuration
 			}
@@ -79,7 +104,7 @@ class FeaturesExtractor {
 		return features;
 	}
 
-	private Set<Feature> jsonToFeature(FromTo inOut, JsonNode json, List<String> path) {
+	private Set<Feature> jsonToFeature(FeatureDepth depth, FromTo inOut, JsonNode json, List<String> path) {
 		Set<Feature> features = new HashSet<Feature>();
 		Iterator<String> fields = json.fieldNames();
 		while (fields.hasNext()) {
@@ -90,9 +115,9 @@ class FeaturesExtractor {
 			features.add(F.ActivityConfField(branch));
 			JsonNode node = json.get(field);
 			if (node.isValueNode()) {
-				features.add(F.ActivityConfFieldValue(branch, node.asText()));
+				features.add(F.ConfFieldValue(depth, branch, node.asText()));
 			} else {
-				jsonToFeature(inOut, node, branch);
+				jsonToFeature(depth, inOut, node, branch);
 			}
 		}
 		return features;
