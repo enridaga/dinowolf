@@ -17,7 +17,7 @@ import dinowolf.annotation.FromToCollector;
 public class FeaturesExtractorTest {
 	private static final Logger l = LoggerFactory.getLogger(FeaturesExtractorTest.class);
 	private static final FeaturesExtractor E = new FeaturesExtractor();
-	
+
 	private InputStream __f(String n) {
 		return getClass().getClassLoader().getResourceAsStream(n);
 	}
@@ -29,10 +29,11 @@ public class FeaturesExtractorTest {
 				__f("A_graphical_plot_of_White_Ash__Beech__and_Hemlock_populations_in_Onondaga_County__NY-v1.wfbundle"),
 				null);
 		FromToCollector coll = new FromToCollector();
-		List<FromTo> ft = coll.getList(wb);
+		List<FromTo> ft = coll
+				.getList("A_graphical_plot_of_White_Ash__Beech__and_Hemlock_populations_in_Onondaga_County__NY-v1", wb);
 		for (FromTo i : ft) {
 			l.info(" > {}", i);
-			l.info("{}",E.extract(i));
+			l.info("{}", E.extract(i));
 		}
 	}
 }

@@ -8,12 +8,6 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.jena.query.Dataset;
-import org.apache.taverna.scufl2.annotation.AnnotationTools;
-import org.apache.taverna.scufl2.api.annotation.Annotation;
-import org.apache.taverna.scufl2.api.common.Child;
-import org.apache.taverna.scufl2.api.common.Visitor;
-import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.configurations.Configuration;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.core.Processor;
@@ -120,7 +114,7 @@ public class Taverna2InspectionTest {
 	public void scufl2_t2flow() throws ReaderException, IOException {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle wb = io.readBundle(__f("Get_similar_phenotypes_for_a_disease_and_a_gene-v1.wfbundle"), null);
-		FeaturesMap ex = FeaturesMapExtractor.generate(wb);
+		FeaturesMap ex = FeaturesMapExtractor.generate("Get_similar_phenotypes_for_a_disease_and_a_gene-v1", wb);
 
 		System.out.println("Profiles count: " + wb.getProfiles().size());
 		Profile p = wb.getMainProfile();
@@ -143,80 +137,5 @@ public class Taverna2InspectionTest {
 				System.out.println(f);
 			}
 		}
-	}
-
-	@Test
-	public void annotations() throws ReaderException, IOException {
-		WorkflowBundleIO io = new WorkflowBundleIO();
-		//AnnotationTools ann = new AnnotationTools();
-		
-		final WorkflowBundle wb = io.readBundle(__f("3Drec-v1.wfbundle"), null);
-		//	The description of a workflow (as I can see it on the myexperiment portal)
-
-		// Scufl2Tools scufl2Tools = new Scufl2Tools();
-		for (Annotation a: wb.getAnnotations()) {
-			  System.out.println(a.getRDFContent());
-			  // Or more elaborate:
-			  // (in case you want to replace the content you will need the path)
-			  //String path = getResourcePath();
-			  //System.out.println(wb.getResources().getResourceAsString(path));
-			}
-
-	}
-
-	@Test
-	public void moreAnnotations() throws ReaderException, IOException {
-		WorkflowBundleIO io = new WorkflowBundleIO();
-		AnnotationTools tools = new AnnotationTools();
-
-		final WorkflowBundle wb = io.readBundle(__f("3Drec-v1.wfbundle"), null);
-		Dataset ds = tools.annotationDatasetFor(wb.getMainWorkflow());
-		System.out.println("DatasetGraph size: " + ds.asDatasetGraph().size());
-		System.out.println("Annotations: " + wb.getAnnotations().size());
-
-		wb.accept(new Visitor() {
-			@Override
-			public boolean visit(WorkflowBean node) {
-				System.out.println(">>>");
-				System.out.println(tools.getTitle((Child<?>) node));
-				System.out.println(tools.getCreator((Child<?>) node));
-				System.out.println(tools.getExampleValue((Child<?>) node));
-				System.out.println(tools.getDescription((Child<?>) node));
-				System.out.println("<<<");
-				return true;
-			}
-
-			@Override
-			public boolean visitEnter(WorkflowBean node) {
-				return true;
-			}
-
-			@Override
-			public boolean visitLeave(WorkflowBean node) {
-				return true;
-			}
-		});
-
-		System.out.println("=============================================");
-
-		wb.getMainProfile().accept(new Visitor() {
-			@Override
-			public boolean visit(WorkflowBean node) {
-				System.out.print(node);
-				System.out.print(' ');
-				System.out.println(wb.getTools().annotationsFor(node, wb));
-				return true;
-			}
-
-			@Override
-			public boolean visitEnter(WorkflowBean node) {
-				return true;
-			}
-
-			@Override
-			public boolean visitLeave(WorkflowBean node) {
-				return true;
-			}
-		});
 	}
 }

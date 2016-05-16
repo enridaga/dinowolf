@@ -17,13 +17,13 @@ import org.slf4j.LoggerFactory;
 public class FromToCollector {
 	private static final Logger l = LoggerFactory.getLogger(FromToCollector.class);
 
-	public List<FromTo> getList(WorkflowBundle bundle) {
+	public List<FromTo> getList(String bundleId, WorkflowBundle bundle) {
 		List<FromTo> list = new ArrayList<FromTo>();
-		list.addAll(getMap(bundle).values());
+		list.addAll(getMap(bundleId, bundle).values());
 		return list;
 	}
 
-	public Map<String, FromTo> getMap(WorkflowBundle bundle) {
+	public Map<String, FromTo> getMap(String bundleId, WorkflowBundle bundle) {
 		Map<String, FromTo> map = new HashMap<String, FromTo>();
 		for (Workflow w : bundle.getWorkflows()) {
 			for (Processor processor : w.getProcessors()) {
@@ -34,7 +34,7 @@ public class FromToCollector {
 					for (Port o : allPorts) {
 						if (i.equals(o))
 							continue;
-						FromTo io = new FromToImpl(processor.getParent(), processor, i, o);
+						FromTo io = new FromToImpl(bundleId, processor.getParent(), processor, i, o);
 						if (!map.containsKey(io.getId())) {
 							l.trace("{}", io);
 							map.put(io.getId(), io);

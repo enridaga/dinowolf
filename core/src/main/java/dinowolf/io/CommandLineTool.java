@@ -23,7 +23,7 @@ import io.airlift.airline.Help;
 import io.airlift.airline.Option;
 
 public class CommandLineTool {
-	
+
 	private final static PrintStream P = System.out;
 
 	public static void main(String[] args) throws Exception {
@@ -32,10 +32,8 @@ public class CommandLineTool {
 	}
 
 	private static Cli<DWTool> parser() {
-		CliBuilder<DWTool> build = Cli.<DWTool> builder("dinowolf")
-				.withDescription("Dinowolf Tool")
-				.withDefaultCommand(HelpCommand.class)
-				.withCommand(FeaturesCommand.class)
+		CliBuilder<DWTool> build = Cli.<DWTool> builder("dinowolf").withDescription("Dinowolf Tool")
+				.withDefaultCommand(HelpCommand.class).withCommand(FeaturesCommand.class)
 				.withCommand(PortmapsCommand.class); // Statistics
 
 		return build.build();
@@ -90,7 +88,7 @@ public class CommandLineTool {
 				throw new FileNotFoundException(input);
 
 			WorkflowBundle wb = io.readBundle(f, null);
-			FeaturesMap ex = FeaturesMapExtractor.generate(wb);
+			FeaturesMap ex = FeaturesMapExtractor.generate(f.getName().replaceAll("\\..*$", ""), wb);
 			Set<FromTo> inout = ex.getPortPairs();
 			for (FromTo x : inout) {
 				P.println(x);
@@ -99,33 +97,33 @@ public class CommandLineTool {
 		}
 	}
 
-//	@Command(name = "summary", description = "Summary a workflow bundle")
-//	public static final class SummaryCommand extends DWTool {
-//		@Option(name = { "-i", "--input" }, description = "File to read")
-//		public static String input = null;
-//		
-//		private WorkflowBundleIO io = new WorkflowBundleIO();
-//		
-//		@Override
-//		public void perform() throws ReaderException, IOException {
-//			if (input == null)
-//				throw new RuntimeException("Missing parameter: input");
-//
-//			File f = new File(input);
-//			if (!f.exists())
-//				throw new FileNotFoundException(input);
-//
-//			WorkflowBundle wb = io.readBundle(f, null);
-//			FeaturesExtractor ex = new FeaturesExtractor(wb);
-//			Set<FromTo> inout = ex.getSet();
-//			P.println("Processors");
-//			for (FromTo x : inout) {
-//				P.print('-');
-//				P.println(x);
-//			}
-//
-//		}
-//	}
+	// @Command(name = "summary", description = "Summary a workflow bundle")
+	// public static final class SummaryCommand extends DWTool {
+	// @Option(name = { "-i", "--input" }, description = "File to read")
+	// public static String input = null;
+	//
+	// private WorkflowBundleIO io = new WorkflowBundleIO();
+	//
+	// @Override
+	// public void perform() throws ReaderException, IOException {
+	// if (input == null)
+	// throw new RuntimeException("Missing parameter: input");
+	//
+	// File f = new File(input);
+	// if (!f.exists())
+	// throw new FileNotFoundException(input);
+	//
+	// WorkflowBundle wb = io.readBundle(f, null);
+	// FeaturesExtractor ex = new FeaturesExtractor(wb);
+	// Set<FromTo> inout = ex.getSet();
+	// P.println("Processors");
+	// for (FromTo x : inout) {
+	// P.print('-');
+	// P.println(x);
+	// }
+	//
+	// }
+	// }
 
 	@Command(name = "features", description = "Extract features from a workflow bundle")
 	public static final class FeaturesCommand extends DWTool {
@@ -145,7 +143,7 @@ public class CommandLineTool {
 				throw new FileNotFoundException(input);
 
 			WorkflowBundle wb = io.readBundle(f, null);
-			FeaturesMap ex = FeaturesMapExtractor.generate(wb);
+			FeaturesMap ex = FeaturesMapExtractor.generate(f.getName().replaceAll("\\..*$", ""), wb);
 			Set<FromTo> inout = ex.getPortPairs();
 			for (FromTo x : inout) {
 				P.println(x);

@@ -15,13 +15,13 @@ public class FeaturesMapExtractor {
 	private static final FeaturesExtractor E = new FeaturesExtractor();
 	private static final FromToCollector C = new FromToCollector();
 
-	public final static BundleFeaturesMap generate(final WorkflowBundle bundle, FromTo.FromToType... types) {
-		return new BundleFeatureMapImpl(bundle, extract(bundle, types));
+	public final static BundleFeaturesMap generate(String bundleId, WorkflowBundle bundle, FromTo.FromToType... types) {
+		return new BundleFeatureMapImpl(bundle, extract(bundleId, bundle, types));
 	}
 
-	public final static FeaturesHashMap extract(WorkflowBundle bundle, FromTo.FromToType... types) {
+	public final static FeaturesHashMap extract(String bundleId, WorkflowBundle bundle, FromTo.FromToType... types) {
 		FeaturesHashMap featuresMap = new FeaturesHashMap();
-		for (FromTo io : C.getList(bundle)) {
+		for (FromTo io : C.getList(bundleId, bundle)) {
 			if (types.length > 0) {
 				if(!Arrays.asList(types).contains(io.getType())){
 					continue;

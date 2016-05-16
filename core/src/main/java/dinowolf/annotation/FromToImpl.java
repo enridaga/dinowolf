@@ -39,7 +39,8 @@ public class FromToImpl implements FromTo {
 	 * @param from
 	 * @param to
 	 */
-	public FromToImpl(Workflow w, Processor p, Port from, Port to) {
+	public FromToImpl(String bundleId, Workflow w, Processor p, Port from, Port to) {
+		
 		this.workflow = w;
 		this.processor = p;
 		this.from = from;
@@ -56,7 +57,7 @@ public class FromToImpl implements FromTo {
 		this.type = FromToType.valueOf(roleFrom + roleTo);
 		this.shortName = new StringBuilder().append(processor.getName()).append("/").append(roleFrom).append(roleTo).append(':').append(from.getName()).append(":")
 				.append(to.getName()).toString();
-		String[] s = new String[] { workflow.getName(), shortName };
+		String[] s = new String[] {bundleId, workflow.getName(), shortName };
 		id = StringUtils.join(s, '/');
 		this.hashCode = new HashCodeBuilder().append(FromTo.class).append(id).toHashCode();
 		
@@ -114,5 +115,13 @@ public class FromToImpl implements FromTo {
 	@Override
 	public int hashCode() {
 		return hashCode;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if(obj instanceof FromTo){
+			return ((FromTo) obj).getId().equals(getId());
+		}
+		return false;
 	}
 }
