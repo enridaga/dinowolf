@@ -6,6 +6,9 @@ import org.apache.taverna.scufl2.api.port.Port;
 
 public interface FromTo {
 	
+	enum FromToType{
+		II,OO,IO,OI
+	}
 	public String getId();
 	
 	public Port from();
@@ -18,6 +21,12 @@ public interface FromTo {
 
 	public Port to();
 
+	public FromToType getType();
+	
+	/**
+	 * Is it Input or Output?
+	 * @return
+	 */
 	public String roleTo();
 
 	public Processor processor();

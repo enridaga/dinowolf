@@ -50,12 +50,12 @@ class FeaturesExtractor {
 		safeAdd(features, F.ProcessorDescription(anno.getDescription(inOut.processor())));
 
 		// From
-		features.add(F.FromPort(inOut.from().getName()));
+		features.add(F.FromPortName(inOut.from().getName()));
 		safeAdd(features, F.FromPortTitle(anno.getTitle(inOut.from())));
 		safeAdd(features, F.FromPortDescription(anno.getDescription(inOut.from())));
 
 		// To
-		features.add(F.ToPort(inOut.to().getName()));
+		features.add(F.ToPortName(inOut.to().getName()));
 		safeAdd(features, F.ToPortTitle(anno.getTitle(inOut.to())));
 		safeAdd(features, F.ToPortDescription(anno.getDescription(inOut.to())));
 

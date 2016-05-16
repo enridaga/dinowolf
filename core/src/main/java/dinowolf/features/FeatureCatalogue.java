@@ -39,6 +39,14 @@ public final class FeatureCatalogue {
 	private Feature __portpair(String name, String value) {
 		return __f(name, value, FeatureDepth.FromToPorts);
 	}
+	
+	private Feature __from(String name, String value, boolean t) {
+		return __f(name, value, FeatureDepth.From, t);
+	}
+	
+	private Feature __to(String name, String value, boolean t) {
+		return __f(name, value, FeatureDepth.To, t);
+	}
 
 	@SuppressWarnings("unused")
 	private Feature __workflow(String name, String value, boolean t) {
@@ -109,16 +117,16 @@ public final class FeatureCatalogue {
 		return __otherport("OtherOutputPortName", value, true);
 	}
 
-	public Feature FromPort(String value) {
-		return __portpair("FromPort", value, true);
+	public Feature FromPortName(String value) {
+		return __from("FromPortName", value, true);
 	}
 
-	public Feature ToPort(String value) {
-		return __portpair("ToPort", value, true);
+	public Feature ToPortName(String value) {
+		return __to("ToPortName", value, true);
 	}
 
 	public Feature FromToType(String value) {
-		return __portpair("FromToType", value, true);
+		return __portpair("FromToType", value, false);
 	}
 
 	public Feature Annotation(String property, String value, FeatureDepth ofwhat, boolean tokenizable) {

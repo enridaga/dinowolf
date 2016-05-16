@@ -30,6 +30,7 @@ public class FromToImpl implements FromTo {
 	private String id = null;
 	private int hashCode;
 	private String shortName;
+	private FromToType type;
 
 	/**
 	 * 
@@ -43,7 +44,6 @@ public class FromToImpl implements FromTo {
 		this.processor = p;
 		this.from = from;
 		this.to = to;
-		
 		for (Entry<String, Class<?>> e : types.entrySet()) {
 			if (e.getValue().isAssignableFrom(this.from.getClass())) {
 				roleFrom = e.getKey();
@@ -52,7 +52,8 @@ public class FromToImpl implements FromTo {
 				roleTo = e.getKey();
 			}
 		}
-		
+
+		this.type = FromToType.valueOf(roleFrom + roleTo);
 		this.shortName = new StringBuilder().append(processor.getName()).append("/").append(roleFrom).append(roleTo).append(':').append(from.getName()).append(":")
 				.append(to.getName()).toString();
 		String[] s = new String[] { workflow.getName(), shortName };
@@ -81,6 +82,11 @@ public class FromToImpl implements FromTo {
 		return roleFrom;
 	}
 
+	@Override
+	public FromToType getType() {
+		return type;
+	}
+	
 	@Override
 	public String roleTo() {
 		return roleTo;
