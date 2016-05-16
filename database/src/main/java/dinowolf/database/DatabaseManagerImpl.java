@@ -62,7 +62,7 @@ class DatabaseManagerImpl implements DatabaseManager {
 
 	@Override
 	public void put(String bundleUri, FeaturesMap featureSet) throws IOException {
-		put(bundleUri, featureSet);
+		features.put(bundleUri, featureSet);
 	}
 
 	@Override
