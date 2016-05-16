@@ -150,7 +150,7 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 					for (Entry<FromTo, FeatureSet> entry : featureMap.entrySet()) {
 						// Portpair
 						insertPortPair.setInt(1, bundleDbId);
-						l.trace("port pair: {}", bundle, entry.getKey().getId());
+						l.trace("port pair: {}", entry.getKey().getId());
 						insertPortPair.setString(2, entry.getKey().getId());
 						insertPortPair.execute();
 						generated = insertPortPair.getGeneratedKeys();
