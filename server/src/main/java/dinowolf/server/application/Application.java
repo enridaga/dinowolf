@@ -2,7 +2,6 @@ package dinowolf.server.application;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -86,7 +85,7 @@ public class Application extends ResourceConfig implements ServletContextListene
 				c++;
 				try {
 					WorkflowBundle wb = manager.get(bundleId);
-					FeaturesMap map = FeaturesMapExtractor.extract(wb, FromToType.IO);
+					FeaturesMap map = FeaturesMapExtractor.extract(bundleId, wb, FromToType.IO);
 					log.debug("{}/{} {} [{}]", new Object[] { c, nb, bundleId, map.size() });
 					manager.put(bundleId, map);
 				} catch (Exception e) {
