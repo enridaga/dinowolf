@@ -21,13 +21,12 @@ import org.slf4j.LoggerFactory;
 import dinowolf.annotation.FromTo;
 import dinowolf.database.h2.FeaturesDatabaseH2;
 import dinowolf.database.h2.H2Queries;
-import dinowolf.database.h2.H2Test;
 import dinowolf.features.FeatureSet;
 import dinowolf.features.FeaturesMap;
 import dinowolf.features.FeaturesMapExtractor;
 
 public class FeaturesDatabaseH2Test {
-	private static final Logger l = LoggerFactory.getLogger(H2Test.class);
+	private static final Logger l = LoggerFactory.getLogger(FeaturesDatabaseH2Test.class);
 
 	@Rule
 	public TestName name = new TestName();
@@ -65,7 +64,7 @@ public class FeaturesDatabaseH2Test {
 		WorkflowBundle bundle = io
 				.readBundle(getClass().getClassLoader().getResourceAsStream("./" + bundleFile + ".wfbundle"), null);
 		
-		FeaturesMap map = FeaturesMapExtractor.extract(bundle);
+		FeaturesMap map = FeaturesMapExtractor.extract(bundleFile, bundle);
 		h2.put(bundleFile, map);
 		
 		FeaturesMap read = h2.getFeatures(bundleFile, bundle);

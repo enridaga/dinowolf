@@ -51,7 +51,7 @@ public class FeaturesDatabaseTDBTest {
 		WorkflowBundle bundle = io
 				.readBundle(getClass().getClassLoader().getResourceAsStream("./" + bundleFile + ".wfbundle"), null);
 
-		FeaturesMap map = FeaturesMapExtractor.extract(bundle);
+		FeaturesMap map = FeaturesMapExtractor.extract(bundleFile, bundle);
 		Assert.assertTrue(features.getFeatures().size() == 0);
 
 		FeaturesMap fm = features.getFeatures(bundleFile, bundle);

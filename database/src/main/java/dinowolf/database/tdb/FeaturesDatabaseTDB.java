@@ -49,7 +49,7 @@ public class FeaturesDatabaseTDB implements FeaturesDatabase {
 		QueryExecution qe = QueryExecutionFactory
 				.create(SparqlQueries.ListFromToFeaturesOfBundle.replace("?bundleId", bundleUri), dataset);
 		ResultSet rs = qe.execSelect();
-		return makeFeaturesMap(rs, container);
+		return makeFeaturesMap(bundleId, rs, container);
 	}
 
 	@Override
@@ -109,8 +109,8 @@ public class FeaturesDatabaseTDB implements FeaturesDatabase {
 
 	private static final FromToCollector C = new FromToCollector();
 
-	private FeaturesMap makeFeaturesMap(ResultSet rs, WorkflowBundle bundle) throws IOException {
-		Map<String, FromTo> map = C.getMap(bundle);
+	private FeaturesMap makeFeaturesMap(String bundleId, ResultSet rs, WorkflowBundle bundle) throws IOException {
+		Map<String, FromTo> map = C.getMap(bundleId, bundle);
 		FeaturesHashMap fsm = new FeaturesHashMap();
 		while (rs.hasNext()) {
 			QuerySolution qs = rs.next();

@@ -57,7 +57,7 @@ class DatabaseManagerImpl implements DatabaseManager {
 
 	@Override
 	public FeaturesMap getFeatures(String bundleId, WorkflowBundle bundle) throws IOException {
-		return getFeatures(bundleId, bundle);
+		return features.getFeatures(bundleId, bundle);
 	}
 
 	@Override

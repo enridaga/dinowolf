@@ -61,9 +61,8 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 			conn.createStatement().execute(H2Queries.CREATE_TABLE_PORTPAIR_FEATURE);
 			conn.commit();
 			conn.setAutoCommit(true);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		} catch (SQLException e) {
+		} catch (IOException | SQLException e) {
+			l.error("SQL Exception", e.getMessage());
 			throw new RuntimeException(e);
 		}
 	}
@@ -73,6 +72,7 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 		try {
 			conn = DriverManager.getConnection(connectionString, username, password);
 		} catch (SQLException e) {
+			l.error("SQL Exception", e.getMessage());
 			throw new IOException(e);
 		}
 		return conn;
@@ -94,6 +94,7 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 			}
 			return set;
 		} catch (SQLException e) {
+			l.error("SQL Exception", e.getMessage());
 			throw new IOException(e);
 		}
 	}
@@ -102,7 +103,7 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 	public FeaturesMap getFeatures(String bundleId, WorkflowBundle container) throws IOException {
 		int dbId = getBundleIdByName(bundleId);
 		FromToCollector co = new FromToCollector();
-		Map<String, FromTo> ft = co.getMap(container);
+		Map<String, FromTo> ft = co.getMap(bundleId, container);
 		try (Connection conn = getConnection();
 				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_FEATURES_OF_BUNDLE)) {
 			st.setInt(1, dbId);
@@ -122,6 +123,7 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 			}
 			return map;
 		} catch (SQLException e) {
+			l.error("SQL Exception", e.getMessage());
 			throw new IOException(e);
 		}
 
@@ -136,6 +138,7 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 					deleteBundle.setString(1, bundle);
 				}
 				int bundleDbId = insertBundle(bundle, conn);
+				l.debug("inserted bundle db id: {}", bundleDbId);
 				ResultSet generated;
 				try (PreparedStatement insertPortPair = conn.prepareStatement(H2Queries.INSERT_PORTPAIR,
 						Statement.RETURN_GENERATED_KEYS);
@@ -147,12 +150,12 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 					for (Entry<FromTo, FeatureSet> entry : featureMap.entrySet()) {
 						// Portpair
 						insertPortPair.setInt(1, bundleDbId);
+						l.trace("port pair: {}", bundle, entry.getKey().getId());
 						insertPortPair.setString(2, entry.getKey().getId());
 						insertPortPair.execute();
 						generated = insertPortPair.getGeneratedKeys();
 						generated.next();
 						int portPairId = generated.getInt(1);
-
 						for (Feature f : entry.getValue()) {
 							// Feature
 							int featureId = 0;
@@ -168,24 +171,26 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 								insertFeature.setBoolean(5, f.isTokenizable());
 								insertFeature.execute();
 								r = insertFeature.getGeneratedKeys();
+								r.next();
 							}
 							featureId = r.getInt(1);
-
 							// Insert port pair
 							insertPortPairFeature.setInt(1, portPairId);
 							insertPortPairFeature.setInt(2, featureId);
 							insertPortPairFeature.execute();
-
 						}
 					}
-				} catch (SQLException e) {
-					throw new IOException(e);
-				}
+				} 
 				conn.commit();
 			} catch (Exception e) {
+				l.error("Execution failed", e);
 				conn.rollback();
+				throw new IOException(e);
+			} finally{
+				conn.setAutoCommit(true);
 			}
 		} catch (SQLException e1) {
+			l.error("SQL Exception", e1.getMessage());
 			throw new IOException(e1);
 		}
 	}
@@ -201,10 +206,11 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 				generated.next();
 				bundleDbId = generated.getInt(1);
 			} catch (SQLException e) {
+				l.error("SQL Exception", e.getMessage());
 				throw new IOException(e);
 			}
 		}
-		return 0;
+		return bundleDbId;
 	}
 
 	private int getBundleIdByName(String name) throws IOException {
@@ -218,6 +224,7 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 				return 0;
 			}
 		} catch (SQLException e) {
+			l.error("SQL Exception", e.getMessage());
 			throw new IOException(e);
 		}
 	}

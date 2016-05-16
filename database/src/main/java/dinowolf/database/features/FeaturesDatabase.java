@@ -21,4 +21,5 @@ public interface FeaturesDatabase {
 	public void put(String bundleId, FeaturesMap featureSet) throws IOException;
 
 	public FeaturesMap getFeatures(String bundleId, WorkflowBundle container) throws IOException;
+	
 }

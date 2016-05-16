@@ -23,7 +23,7 @@ import dinowolf.features.FeatureDepth;
 
 public class H2InsertStressTest {
 
-	private static final Logger l = LoggerFactory.getLogger(H2Test.class);
+	private static final Logger l = LoggerFactory.getLogger(H2InsertStressTest.class);
 
 	@Rule
 	public TestName name = new TestName();

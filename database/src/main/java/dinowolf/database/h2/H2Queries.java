@@ -11,11 +11,17 @@ public class H2Queries {
 		case Processor:
 			return 'P';
 		case FromToPorts:
-			return 'F';
+			return 'M';
 		case Workflow:
 			return 'W';
+		case Activity:
+			return 'A';
 		case OtherPort:
 			return 'S';
+		case From:
+			return 'F';
+		case To:
+			return 'T';
 		default:
 			throw new UnsupportedOperationException("Unsupported enum value");
 		}
@@ -33,12 +39,18 @@ public class H2Queries {
 		switch (level) {
 		case 'P':
 			return FeatureDepth.Processor;
-		case 'F':
+		case 'M':
 			return FeatureDepth.FromToPorts;
 		case 'W':
 			return FeatureDepth.Workflow;
 		case 'S':
 			return FeatureDepth.OtherPort;
+		case 'A':
+			return FeatureDepth.Activity;
+		case 'F':
+			return FeatureDepth.From;
+		case 'T':
+			return FeatureDepth.To;
 		default:
 			throw new UnsupportedOperationException("Unsupported enum value");
 		}
@@ -61,6 +73,6 @@ public class H2Queries {
 	//
 	public static final String SELECT_PORTPAIR_OF_BUNDLE = "SELECT NAME FROM PORTPAIR, BUNDLE WHERE PORTPAIR.BUNDLE = BUNDLE.ID AND BUNDLE.FILE = ?";
 	//
-	public static final String SELECT_FEATURE_EXISTS = "SELECT ID FROM FEATURES WHERE HASHCODE = ? LIMIT 1";
+	public static final String SELECT_FEATURE_EXISTS = "SELECT ID FROM FEATURE WHERE HASHCODE = ? LIMIT 1";
 	
 }
