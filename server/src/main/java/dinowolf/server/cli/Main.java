@@ -29,6 +29,10 @@ public class Main {
 		// Pass Cli arguments to Application
 		root.setInitParameter(Application._ParamHOME, cli.getParamData());
 		root.setInitParameter(Application._ParamLOAD, cli.getParamLoad());
+		if(cli.getParamBuild()){
+			System.out.println("Setting build command");
+			root.setInitParameter(Application._ParamBUILD, "true");
+		}
 		
 		String resLocation = Main.class
 				.getResource("/static").toString();

@@ -2,16 +2,24 @@ package dinowolf.server.application;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import dinowolf.annotation.FromTo.FromToType;
 import dinowolf.database.DatabaseManager;
 import dinowolf.database.DatabaseManagerFactory;
+import dinowolf.features.FeaturesMap;
+import dinowolf.features.FeaturesMapExtractor;
 
 public class Application extends ResourceConfig implements ServletContextListener {
 	private static final Logger log = LoggerFactory.getLogger(Application.class);
@@ -19,6 +27,7 @@ public class Application extends ResourceConfig implements ServletContextListene
 	public static final String _ParamHOME = "dinowolf.home";
 	public static final String _ParamLOAD = "dinowolf.loadfrom";
 	public static final String _ParamMANAGER = "dinowolf.manager";
+	public static final String _ParamBUILD = "dinowolf.build";
 
 	public Application() {
 		packages("dinowolf.server.application.rest", "dinowolf.server.application.writers");
@@ -64,6 +73,37 @@ public class Application extends ResourceConfig implements ServletContextListene
 			} catch (Exception e) {
 				throw new RuntimeException("Cannot load data.", e);
 			}
+		}
+
+		String paramBuildFeatures = sce.getServletContext().getInitParameter(_ParamBUILD);
+		if (paramBuildFeatures != null && "true".equals(paramBuildFeatures)) {
+			log.info("Build features");
+			int nb = manager.list().size();
+			int c = 0;
+			Map<String, Exception> errors = new HashMap<String, Exception>();
+			for (String bundleId : manager.list()) {
+				log.trace("Loading bundle {}", bundleId);
+				c++;
+				try {
+					WorkflowBundle wb = manager.get(bundleId);
+					FeaturesMap map = FeaturesMapExtractor.extract(wb, FromToType.IO);
+					log.debug("{}/{} {} [{}]", new Object[] { c, nb, bundleId, map.size() });
+					manager.put(bundleId, map);
+				} catch (Exception e) {
+					log.warn("Skipping {} (error occurred)", bundleId);
+					errors.put(bundleId, e);
+				}
+			}
+			if (log.isErrorEnabled()) {
+				log.error("The following bundles raised exceptions:");
+				for (Entry<String, Exception> entries : errors.entrySet()) {
+					log.error(" > {} : {}", entries.getKey(), entries.getValue());
+					if (log.isDebugEnabled()) {
+						log.error(" -- ", entries.getValue());
+					}
+				}
+			}
+			log.info("Build features completed.");
 		}
 	}
 

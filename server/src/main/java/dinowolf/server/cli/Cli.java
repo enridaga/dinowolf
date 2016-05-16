@@ -14,7 +14,7 @@ public class Cli {
 	private int port = 8080;
 	private String data = "./dinowolf-repository";
 	private String load = "";
-
+	private boolean build = false; 
 	private String[] args;
 
 	private static PrintStream O = System.out;
@@ -23,7 +23,7 @@ public class Cli {
 	public int getParamPort() {
 		return port;
 	}
-
+	
 	private Options options = new Options();
 
 	public Cli(String[] args) {
@@ -32,6 +32,7 @@ public class Cli {
 		options.addOption("p", "port", true, "Set the port the server will listen to (defaults to 8080).");
 		options.addOption("l", "load", true, "Load .wfbundle files from this directory.");
 		options.addOption("r", "repository", true, "Repository directory (default is ./dinowolf-repository).");
+		options.addOption("b", "build", false, "(re)build the features database.");
 	}
 
 	private void help() {
@@ -48,6 +49,7 @@ public class Cli {
 		CommandLine cmd = null;
 		try {
 			cmd = parser.parse(options, args);
+			
 			if (cmd.hasOption('h'))
 				help();
 			if (cmd.hasOption('p')) {
@@ -75,7 +77,9 @@ public class Cli {
 				}
 				load = loadFile.getAbsolutePath();
 			}
-
+			if (cmd.hasOption('b')) {
+				this.build = true;
+			}
 		} catch (ParseException e) {
 			E.println("Failed to parse comand line properties");
 			e.printStackTrace();
@@ -89,5 +93,9 @@ public class Cli {
 
 	public String getParamLoad() {
 		return load;
+	}
+	
+	public boolean getParamBuild() {
+		return build;
 	}
 }

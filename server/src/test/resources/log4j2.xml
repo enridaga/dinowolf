@@ -8,9 +8,10 @@
 	</Appenders>
 	<Loggers>
 		<Logger name="org.apache.log4j.xml" level="info" />
-		<Logger name="dinowolf" level="debug" />
-		<Logger name="org.eclipse.jetty" level="trace" />
+		<Logger name="dinowolf" level="info" />
+		<Logger name="org.eclipse.jetty" level="warn" />
 		<Logger name="dinowolf.database" level="trace" />
+		<Logger name="dinowolf.server" level="trace" />
 		<Root level="info">
 			<AppenderRef ref="STDOUT" />
 		</Root>

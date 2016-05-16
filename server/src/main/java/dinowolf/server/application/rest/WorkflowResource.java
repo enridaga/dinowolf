@@ -16,7 +16,6 @@ import org.slf4j.LoggerFactory;
 import com.google.gson.Gson;
 
 import dinowolf.features.FeaturesMap;
-import dinowolf.features.FeaturesMapExtractor;
 
 @Path("workflow/{id}")
 @Produces({ MediaType.APPLICATION_JSON, MediaType.TEXT_PLAIN })
@@ -45,7 +44,7 @@ public class WorkflowResource extends AbstractResource {
 	public Response features() throws IOException {
 		log.debug("GET {} features", id);
 		WorkflowBundle bundle = getManager().get(getId());
-		FeaturesMap map = FeaturesMapExtractor.generate(bundle);
+		FeaturesMap map = getManager().getFeatures(getId(), bundle);
 		return Response.ok(new Gson().toJson(map)).build();
 	}
 
