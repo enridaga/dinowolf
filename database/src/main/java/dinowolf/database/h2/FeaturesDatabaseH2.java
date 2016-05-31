@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.StringReader;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -26,12 +25,8 @@ import dinowolf.features.FeatureSet;
 import dinowolf.features.FeaturesHashMap;
 import dinowolf.features.FeaturesMap;
 
-public class FeaturesDatabaseH2 implements FeaturesDatabase {
-	private static final Logger l = LoggerFactory.getLogger(FeaturesDatabaseH2.class);
-	private String connectionString;
-	private String username;
-	private String password;
-
+public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase {
+	static private final Logger l = LoggerFactory.getLogger(FeaturesDatabaseH2.class);
 	static {
 		try {
 			Class.forName("org.h2.Driver");
@@ -41,18 +36,15 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 	}
 
 	public FeaturesDatabaseH2(File location, String user, String password) {
-		this(location, "dinowolf", user, password, "MVCC=TRUE;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO");
+		super(location, user, password);
 	}
 
-	public FeaturesDatabaseH2(File location, String dbname, String user, String password) {
-		this(location, dbname, user, password, "MVCC=TRUE;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO");
+	public FeaturesDatabaseH2(File location, String database, String user, String password) {
+		super(location, database, user, password);
 	}
 
-	public FeaturesDatabaseH2(File location, String dbname, String user, String password, String options) {
-		this.connectionString = "jdbc:h2:file:" + location.getAbsolutePath() + "/" + dbname + ";" + options;
-		this.username = user;
-		this.password = password;
-
+	@Override
+	protected void setup() {
 		try (Connection conn = getConnection()) {
 			conn.setAutoCommit(false);
 			conn.createStatement().execute(H2Queries.CREATE_TABLE_BUNDLE);
@@ -65,17 +57,6 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 			l.error("SQL Exception", e.getMessage());
 			throw new RuntimeException(e);
 		}
-	}
-
-	private Connection getConnection() throws IOException {
-		Connection conn;
-		try {
-			conn = DriverManager.getConnection(connectionString, username, password);
-		} catch (SQLException e) {
-			l.error("SQL Exception", e.getMessage());
-			throw new IOException(e);
-		}
-		return conn;
 	}
 
 	public FeaturesDatabaseH2(File location) {
@@ -180,13 +161,13 @@ public class FeaturesDatabaseH2 implements FeaturesDatabase {
 							insertPortPairFeature.execute();
 						}
 					}
-				} 
+				}
 				conn.commit();
 			} catch (Exception e) {
 				l.error("Execution failed", e);
 				conn.rollback();
 				throw new IOException(e);
-			} finally{
+			} finally {
 				conn.setAutoCommit(true);
 			}
 		} catch (SQLException e1) {
