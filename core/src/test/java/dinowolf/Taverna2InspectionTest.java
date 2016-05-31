@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.jena.sparql.core.Quad;
 import org.apache.taverna.scufl2.api.configurations.Configuration;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 import org.apache.taverna.scufl2.api.core.Processor;
@@ -24,6 +25,7 @@ import dinowolf.annotation.FromTo;
 import dinowolf.features.Feature;
 import dinowolf.features.FeaturesMap;
 import dinowolf.features.FeaturesMapExtractor;
+import dinowolf.io.AnnotationHelper;
 import gonzales.xml.Gonzo;
 
 public class Taverna2InspectionTest {
@@ -136,6 +138,17 @@ public class Taverna2InspectionTest {
 				System.out.print(' ');
 				System.out.println(f);
 			}
+		}
+	}
+
+	@Test
+	public void link() throws ReaderException, IOException {
+		WorkflowBundleIO io = new WorkflowBundleIO();
+		WorkflowBundle wb = io.readBundle(__f("Get_similar_phenotypes_for_a_disease_and_a_gene-v1.wfbundle"), null);
+		AnnotationHelper h = new AnnotationHelper(wb);
+		Iterator<Quad> iq = h.getDataset().asDatasetGraph().find();
+		while (iq.hasNext()) {
+			System.out.println(iq.next());
 		}
 	}
 }
