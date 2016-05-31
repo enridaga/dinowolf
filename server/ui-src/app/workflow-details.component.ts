@@ -6,16 +6,24 @@ import {Http} from 'angular2/http';
 
 @Component({
     template: `
-<h1 *ngIf="workflow"><span *ngIf="workflow.title">{{workflow.title}}</span><span *ngIf="!workflow.title">{{workflow.name}}</span></h1>
+<h1 *ngIf="name">{{name}}</h1>
+<div *ngIf="workflow"><strong>Workflow:</strong> 
+    <span *ngIf="workflow.title">{{workflow.title}}</span>
+    <span *ngIf="!workflow.title">{{workflow.name}}</span>
+</div>
 <div *ngIf="errorMessage" class="alert alert-danger" role="alert"><i class="fa fa-exclamation-triangle"></i> Error: {{errorMessage}}</div>
 <div *ngIf="features">
+    <p><strong>I/O port pairs:</strong></p>
+    <ul>
+    <li *ngFor="#pair of features.getPortpairs()">{{pair}}</li>
+    </ul>
     <div *ngFor="#pair of features.getPortpairs()">
         <h4>{{pair}}</h4>
         <table class="table" >
             <tr *ngFor="#feature of features.getFeatures(pair)">
+                <td>{{feature.l}}</td>                
                 <td>{{feature.n}}</td>
-                <td>{{feature.v}}</td>
-                <td>{{feature.l}}</td>
+                <td style="word-break: break-all;">{{feature.v}}</td>
                 <td>{{feature.t}}</td>
             </tr>
         </table>
@@ -35,15 +43,15 @@ export class WorkflowDetailsComponent {
         private _router: Router, 
         private _service: WorkflowDetailsService){ }     
     ngOnInit() {
-        name = this._params.get('name');
+        this.name = this._params.get('name');
+        console.log("workflow name:",this.name);
         // workflow
         this._service.getWorkflow(name).subscribe(
             workflow => this.workflow = workflow,
             error => this.errorMessage = <any>error);
         // features
-        this._service.getFeatures(name).subscribe(
+        this._service.getFeatures(this.name).subscribe(
             features => this.features = features,
             error => this.errorMessage = <any>error);
-        
     }
 }

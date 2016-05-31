@@ -58,8 +58,8 @@ export class WorkflowDetailsService {
         if (body) {
             features = new Features(body);
         }
-        console.log("body",body);
-        console.log("WF",features);
+//        console.log("body",body);
+//        console.log("WF",features);
         return features;
     }
     constructor(public http: Http) { }

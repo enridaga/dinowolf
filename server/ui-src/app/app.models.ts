@@ -17,17 +17,26 @@ export class Workflow {
 }
 
 export class Features {
-    constructor(private _map : Object){ }
+    constructor(private _map : Object){ 
+
+    }
+    
+    _sortByDepth(a, b){
+        let _depths = ['From','To','FromToPorts','OtherPort','Activity','Processor','Workflow'];
+        return _depths.indexOf(a.l) - _depths.indexOf(b.l);    
+    }
     
     getPortpairs(){
         let pairs = new Array<string>();
         for(var p in this._map){
             pairs.push(p);    
         }
-        return pairs;
+        return pairs.sort();
     }
     
     getFeatures(portPair: string){
-        return this._map[portPair];    
+        let fff = this._map[portPair];
+        return fff.sort(this._sortByDepth);
+ //       return fff;
     }
 }

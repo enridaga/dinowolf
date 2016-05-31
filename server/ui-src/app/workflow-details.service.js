@@ -76,8 +76,8 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
                     if (body) {
                         features = new app_models_1.Features(body);
                     }
-                    console.log("body", body);
-                    console.log("WF", features);
+                    //        console.log("body",body);
+                    //        console.log("WF",features);
                     return features;
                 };
                 WorkflowDetailsService = __decorate([
