@@ -19,6 +19,7 @@ import dinowolf.annotation.FromTo;
 import dinowolf.annotation.FromToCollector;
 import dinowolf.database.features.FeaturesDatabase;
 import dinowolf.features.Feature;
+import dinowolf.features.FeatureDepth;
 import dinowolf.features.FeatureHashSet;
 import dinowolf.features.FeatureImpl;
 import dinowolf.features.FeatureSet;
@@ -60,7 +61,7 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 	}
 
 	public FeaturesDatabaseH2(File location) {
-		this(location, "dinowolf", "dinowolf");
+		super(location);
 	}
 
 	@Override
@@ -99,7 +100,7 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 				if (!map.containsKey(key)) {
 					map.put(key, new FeatureHashSet());
 				}
-				map.get(key).add(new FeatureImpl(rs.getString(3), rs.getString(4),
+				map.get(key).add(new FeatureH2(rs.getInt(7),rs.getString(3), rs.getString(4),
 						H2Queries.toFeatureLevel(rs.getInt(5)), rs.getBoolean(6)));
 			}
 			return map;
@@ -207,6 +208,38 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 		} catch (SQLException e) {
 			l.error("SQL Exception", e.getMessage());
 			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public FeatureSet getFeatures(String bundleId, String portPair) throws IOException {
+		int dbId = getBundleIdByName(bundleId);
+		try (Connection conn = getConnection();
+				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_FEATURES_OF_PORTPAIR)) {
+			st.setInt(1, dbId);
+			st.setString(2, portPair);
+			ResultSet rs = st.executeQuery();
+			FeatureSet set = new FeatureHashSet();
+			while (rs.next()) {
+				set.add(new FeatureH2(rs.getInt(7), rs.getString(3), rs.getString(4), H2Queries.toFeatureLevel(rs.getInt(5)),
+						rs.getBoolean(6)));
+			}
+			return set;
+		} catch (SQLException e) {
+			l.error("SQL Exception", e.getMessage());
+			throw new IOException(e);
+		}
+	}
+
+	public static class FeatureH2 extends FeatureImpl {
+		private int dbId;
+		public FeatureH2(int dbId, String string, String string2, FeatureDepth featureLevel, boolean boolean1) {
+			super(string, string2, featureLevel, boolean1);
+			this.dbId = dbId;
+		}
+
+		public int getDbId(){
+			return dbId;
 		}
 	}
 }

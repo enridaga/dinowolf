@@ -15,6 +15,9 @@ public abstract class H2Connected {
 	protected String username;
 	protected String password;
 
+	public H2Connected(File location){
+		this(location, "dinowolf", "dinowolf");
+	}
 	public H2Connected(File location, String user, String password) {
 		this(location, "dinowolf", user, password, "MVCC=TRUE;DB_CLOSE_ON_EXIT=TRUE;FILE_LOCK=NO");
 	}

@@ -2,6 +2,7 @@ package dinowolf.server.application;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -47,7 +48,13 @@ public class Application extends ResourceConfig implements ServletContextListene
 		}
 
 		log.info("Setup DB maanager");
-		DatabaseManager manager = DatabaseManagerFactory.getManager(home);
+		DatabaseManager manager;
+		try {
+			manager = DatabaseManagerFactory.getManager(home);
+		} catch (IOException e1) {
+			log.error("Initialization Failed", e1);
+			throw new RuntimeException(e1);
+		}
 		sce.getServletContext().setAttribute(_ParamMANAGER, manager);
 
 		String paramLOAD = sce.getServletContext().getInitParameter(_ParamLOAD);

@@ -22,6 +22,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonParser;
 
+import dinowolf.database.h2.FeaturesDatabaseH2.FeatureH2;
 import enridaga.colatti.ColattiException;
 import enridaga.colatti.Concept;
 import enridaga.colatti.ConceptFactory;
@@ -48,6 +49,10 @@ public class H2Lattice extends H2Connected implements Lattice {
 
 	public H2Lattice(File location, String user, String password) {
 		super(location, user, password);
+	}
+	
+	public H2Lattice(File location) {
+		this(location, "dinowolf", "dinowolf");
 	}
 
 	public H2Lattice(File location, String database, String user, String password) {
@@ -401,7 +406,7 @@ public class H2Lattice extends H2Connected implements Lattice {
 		JsonArray array = new JsonArray();
 		for (Object i : items) {
 			if (!(i instanceof String)) {
-				throw new ColattiException("objects or attributes must be of type String");
+				throw new ColattiException("objects or attributes must be of type String. Found: " + i.getClass().getName());
 			}
 			array.add(i.toString());
 		}

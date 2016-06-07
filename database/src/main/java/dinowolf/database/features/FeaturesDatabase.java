@@ -22,4 +22,6 @@ public interface FeaturesDatabase {
 
 	public FeaturesMap getFeatures(String bundleId, WorkflowBundle container) throws IOException;
 	
+	public FeatureSet getFeatures(String bundleId, String portPair) throws IOException;
+	
 }

@@ -2,6 +2,7 @@ package dinowolf.database.h2;
 
 import org.apache.commons.codec.digest.DigestUtils;
 
+import dinowolf.database.annotations.AnnotationAction;
 import dinowolf.features.Feature;
 import dinowolf.features.FeatureDepth;
 
@@ -22,6 +23,23 @@ public class H2Queries {
 			return 'F';
 		case To:
 			return 'T';
+		default:
+			throw new UnsupportedOperationException("Unsupported enum value");
+		}
+	}
+
+	public static int toInt(AnnotationAction action) {
+		switch (action) {
+		case MIXED:
+			return 'M';
+		case PICKED:
+			return 'P';
+		case NON_PICKED:
+			return 'N';
+		case NONE:
+			return '0';
+		case SKIPPED:
+			return 'S';
 		default:
 			throw new UnsupportedOperationException("Unsupported enum value");
 		}
@@ -56,6 +74,23 @@ public class H2Queries {
 		}
 	}
 
+	public static final AnnotationAction toAnnotationAction(int action) {
+		switch (action) {
+		case 'P':
+			return AnnotationAction.PICKED;
+		case 'N':
+			return AnnotationAction.NON_PICKED;
+		case 'M':
+			return AnnotationAction.MIXED;
+		case '0':
+			return AnnotationAction.NONE;
+		case 'S':
+			return AnnotationAction.SKIPPED;
+		default:
+			throw new UnsupportedOperationException("Unsupported enum value");
+		}
+	}
+
 	/*
 	 * FEATURES
 	 */
@@ -72,10 +107,13 @@ public class H2Queries {
 	public static final String INSERT_PORTPAIR_FEATURE = "INSERT INTO PORTPAIR_FEATURE (PORTPAIR,FEATURE) VALUES (?,?)";
 	//
 	public static final String SELECT_ALL_FEATURES = "SELECT ID, HASHCODE, NAME, VALUE, LEVEL, TOKENIZABLE FROM FEATURE";
-	public static final String SELECT_FEATURES_OF_BUNDLE = "SELECT PORTPAIR.NAME, FEATURE.HASHCODE, FEATURE.NAME, FEATURE.VALUE, FEATURE.LEVEL, FEATURE.TOKENIZABLE FROM FEATURE, BUNDLE, PORTPAIR, PORTPAIR_FEATURE WHERE FEATURE.ID = PORTPAIR_FEATURE.FEATURE AND PORTPAIR.ID = PORTPAIR_FEATURE.PORTPAIR AND PORTPAIR.BUNDLE = BUNDLE.ID AND BUNDLE.ID = ?";
+	public static final String SELECT_FEATURES_OF_BUNDLE = "SELECT PORTPAIR.NAME, FEATURE.HASHCODE, FEATURE.NAME, FEATURE.VALUE, FEATURE.LEVEL, FEATURE.TOKENIZABLE, FEATURE.ID FROM FEATURE, BUNDLE, PORTPAIR, PORTPAIR_FEATURE WHERE FEATURE.ID = PORTPAIR_FEATURE.FEATURE AND PORTPAIR.ID = PORTPAIR_FEATURE.PORTPAIR AND PORTPAIR.BUNDLE = BUNDLE.ID AND BUNDLE.ID = ?";
+	public static final String SELECT_FEATURES_OF_PORTPAIR = "SELECT PORTPAIR.NAME, FEATURE.HASHCODE, FEATURE.NAME, FEATURE.VALUE, FEATURE.LEVEL, FEATURE.TOKENIZABLE, FEATURE.ID FROM FEATURE, BUNDLE, PORTPAIR, PORTPAIR_FEATURE WHERE FEATURE.ID = PORTPAIR_FEATURE.FEATURE AND PORTPAIR.ID = PORTPAIR_FEATURE.PORTPAIR AND PORTPAIR.BUNDLE = BUNDLE.ID AND BUNDLE.ID = ? AND PORTPAIR.NAME = ?";
+	public static final String SELECT_FEATURE_IDS_OF_PORTPAIR = "SELECT FEATURE.ID, FEATURE.LEVEL, FEATURE.TOKENIZABLE FROM PORTPAIR, PORTPAIR_FEATURE WHERE PORTPAIR.ID = PORTPAIR_FEATURE.PORTPAIR AND PORTPAIR.NAME = ?";
 	public static final String SELECT_BUNDLE_ID_BY_NAME = "SELECT ID FROM BUNDLE WHERE FILE = ?";
 	//
 	public static final String SELECT_PORTPAIR_OF_BUNDLE = "SELECT NAME FROM PORTPAIR, BUNDLE WHERE PORTPAIR.BUNDLE = BUNDLE.ID AND BUNDLE.FILE = ?";
+	public static final String SELECT_PORTPAIR_ID = "SELECT ID FROM PORTPAIR WHERE NAME = ?";
 	//
 	public static final String SELECT_FEATURE_EXISTS = "SELECT ID FROM FEATURE WHERE HASHCODE = ? LIMIT 1";
 
@@ -98,6 +136,13 @@ public class H2Queries {
 	public static final String SELECT_CONCEPT_SIZE = "SELECT COUNT(*) FROM CONCEPT";
 	public static final String SELECT_CONCEPT_IS_PARENT = "SELECT TRUE FROM LATTICE WHERE CHILD = ? AND PARENT = ? LIMIT 1";
 	public static final String SELECT_MAX_ATTRIBUTES_CARDINALITY = "SELECT MAX(ATTRIBUTES_SIZE) FROM CONCEPT";
-	
 
+	/*
+	 * Annotations
+	 */
+	public static final String CREATE_TABLE_ANNOTATION_UNIT = "CREATE TABLE IF NOT EXISTS ANNOTATION_UNIT (PORTPAIR INT NOT NULL PRIMARY KEY, ANNOTATION VARCHAR NOT NULL, FOREIGN KEY (PORTPAIR) REFERENCES PORTPAIR(ID))";
+	public static final String CREATE_TABLE_ANNOTATION_LOG = "CREATE TABLE IF NOT EXISTS ANNOTATION_LOG (ID INT NOT NULL AUTO_INCREMENT PRIMARY KEY, PORTPAIR INT NOT NULL, BUNDLE INT NOT NULL, RECOMMENDED VARCHAR NOT NULL, ACTION VARCHAR(1) NOT NULL, FOREIGN KEY (PORTPAIR) REFERENCES PORTPAIR(ID))";
+	public static final String INSERT_ANNOTATION_LOG = "INSERT INTO ANNOTATION_LOG (PORTPAIR, RECOMMENDED, ACTION) VALUES (?,?,?)";
+	public static final String INSERT_ANNOTATION_UNIT = "INSERT INTO ANNOTATION_UNIT (PORTPAIR, ANNOTATION) VALUES (?,?)";
+	public static final String SELECT_ANNOTATIONS = "SELECT BUNDLE.ID, PORTPAIR.NAME, ANNOTATION FROM BUNDLE, ANNOTATION_UNIT, PORTPAIR WHERE BUNDLE.ID = PORTPAIR.BUNDLE AND PORTPAIR.ID = ANNOTATION_UNIT.PORTPAIR";
 }
