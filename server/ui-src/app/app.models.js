@@ -14,9 +14,10 @@ System.register([], function(exports_1, context_1) {
             }());
             exports_1("Feature", Feature);
             Bundle = (function () {
-                function Bundle(id, name) {
+                function Bundle(id, name, progress) {
                     this.id = id;
                     this.name = name;
+                    this.progress = progress;
                 }
                 return Bundle;
             }());
@@ -66,4 +67,12 @@ System.register([], function(exports_1, context_1) {
         }
     }
 });
+//@Pipe({
+//  name: 'slice'
+//})
+//export class SlicePipe implements PipeTransform {
+//  transform(val:string, params:string[]):string {
+//    return val.split(params[0]);
+//  }
+//} 
 //# sourceMappingURL=app.models.js.map

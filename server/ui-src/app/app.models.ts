@@ -5,7 +5,7 @@ export class Feature {
 }
 
 export class Bundle {
-    constructor(public id: string, public name: string) { }
+    constructor(public id: string, public name: string, public progress: string) { } 
 }
 
 export class Annotation {
@@ -13,7 +13,8 @@ export class Annotation {
 }
 
 export class Workflow {
-    constructor(public name: string, public title: string, public description: string, public creator: string){ }    
+    constructor(public name: string, public title: string, public description: string, public creator: string){ 
+    }    
 }
 
 export class Features {
@@ -40,3 +41,12 @@ export class Features {
  //       return fff;
     }
 }
+
+//@Pipe({
+//  name: 'slice'
+//})
+//export class SlicePipe implements PipeTransform {
+//  transform(val:string, params:string[]):string {
+//    return val.split(params[0]);
+//  }
+//}

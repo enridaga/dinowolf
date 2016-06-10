@@ -41,8 +41,8 @@ System.register(['angular2/core', './repository.service', 'angular2/router'], fu
                 };
                 RepositoryComponent = __decorate([
                     core_1.Component({
-                        template: "\n  <h1>{{title}}</h1>\n  <ul class=\"items\">\n    <li *ngFor=\"#bundle of bundles\">\n      <a (click)=\"onSelect(bundle)\">\n      {{bundle.name}}</a>\n    </li>\n  </ul>\n",
-                        styles: ["\n    ul.items li a {cursor:pointer}\n"],
+                        template: "\n  <h1>{{title}}</h1>\n  <table class=\"table\">\n    <tr *ngFor=\"#bundle of bundles\">\n      <td><a (click)=\"onSelect(bundle)\">\n      {{bundle.name | slice:1:60}}</a></td>\n        <td>\n        <div class=\"progress\">\n          <div class=\"progress-bar\" role=\"progressbar\" aria-valuenow=\"bundle.progress\" aria-valuemin=\"0\" aria-valuemax=\"100\" style=\"width: {{bundle.progress}}%;\">\n            {{bundle.progress}}%\n          </div>\n        </div>\n        </td>\n    </tr>\n  </table>\n",
+                        styles: ["\n    table.table td a {cursor:pointer;}\n"],
                         providers: [repository_service_1.RepositoryService]
                     }), 
                     __metadata('design:paramtypes', [router_1.Router, repository_service_1.RepositoryService])

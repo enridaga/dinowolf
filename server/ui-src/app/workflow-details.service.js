@@ -35,6 +35,7 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
                     var theHeaders = new http_1.Headers();
                     theHeaders.append("Accept", "application/json");
                     var options = new http_1.RequestOptions({ headers: theHeaders });
+                    console.log("workflow bobby", name);
                     var observable = this.http.get('/service/workflow/' + name, options);
                     var o = observable
                         .map(this.extractWorkflowData);

@@ -37,15 +37,15 @@ System.register(['angular2/core', 'angular2/router', './workflow-details.service
                 WorkflowDetailsComponent.prototype.ngOnInit = function () {
                     var _this = this;
                     this.name = this._params.get('name');
-                    console.log("workflow name:", this.name);
                     // workflow
-                    this._service.getWorkflow(name).subscribe(function (workflow) { return _this.workflow = workflow; }, function (error) { return _this.errorMessage = error; });
+                    this.link = "http://www.myexperiment.org/workflows/" + this.name.slice(0, this.name.indexOf('-'));
+                    this._service.getWorkflow(this.name).subscribe(function (workflow) { return _this.workflow = workflow; }, function (error) { return _this.errorMessage = error; });
                     // features
                     this._service.getFeatures(this.name).subscribe(function (features) { return _this.features = features; }, function (error) { return _this.errorMessage = error; });
                 };
                 WorkflowDetailsComponent = __decorate([
                     core_1.Component({
-                        template: "\n<h1 *ngIf=\"name\">{{name}}</h1>\n<div *ngIf=\"workflow\"><strong>Workflow:</strong> \n    <span *ngIf=\"workflow.title\">{{workflow.title}}</span>\n    <span *ngIf=\"!workflow.title\">{{workflow.name}}</span>\n</div>\n<div *ngIf=\"errorMessage\" class=\"alert alert-danger\" role=\"alert\"><i class=\"fa fa-exclamation-triangle\"></i> Error: {{errorMessage}}</div>\n<div *ngIf=\"features\">\n    <p><strong>I/O port pairs:</strong></p>\n    <ul>\n    <li *ngFor=\"#pair of features.getPortpairs()\">{{pair}}</li>\n    </ul>\n    <div *ngFor=\"#pair of features.getPortpairs()\">\n        <h4>{{pair}}</h4>\n        <table class=\"table\" >\n            <tr *ngFor=\"#feature of features.getFeatures(pair)\">\n                <td>{{feature.l}}</td>                \n                <td>{{feature.n}}</td>\n                <td style=\"word-break: break-all;\">{{feature.v}}</td>\n                <td>{{feature.t}}</td>\n            </tr>\n        </table>\n    </div>\n</div>\n",
+                        template: "\n<h1 *ngIf=\"name\">{{name}}</h1>\n<a href=\"{{link}}\" target=\"_myexperiments\">{{link}}</a>\n<div *ngIf=\"workflow\">\n    <strong>Workflow:</strong> \n    <span *ngIf=\"workflow.title\">{{workflow.title}}</span>\n    <span *ngIf=\"!workflow.title\">{{workflow.name}}</span>\n</div>\n<div *ngIf=\"errorMessage\" class=\"alert alert-danger\" role=\"alert\"><i class=\"fa fa-exclamation-triangle\"></i> Error: {{errorMessage}}</div>\n<div *ngIf=\"features\">\n    <p><strong>I/O port pairs:</strong></p>\n    <ul>\n    <li *ngFor=\"#pair of features.getPortpairs()\">{{pair}}</li>\n    </ul>\n    <div *ngFor=\"#pair of features.getPortpairs()\">\n        <h4>{{pair}}</h4>\n        <table class=\"table\" >\n            <tr *ngFor=\"#feature of features.getFeatures(pair)\">\n                <td>{{feature.l}}</td>                \n                <td>{{feature.n}}</td>\n                <td style=\"word-break: break-all;\">{{feature.v}}</td>\n                <td>{{feature.t}}</td>\n            </tr>\n        </table>\n    </div>\n</div>\n",
                         providers: [workflow_details_service_1.WorkflowDetailsService]
                     }), 
                     __metadata('design:paramtypes', [http_1.Http, router_1.RouteParams, core_1.Injector, router_1.Router, workflow_details_service_1.WorkflowDetailsService])

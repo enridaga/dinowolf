@@ -9,7 +9,7 @@ export class RepositoryService {
         let theHeaders = new Headers();
         theHeaders.append("Accept", "application/json");
         let options = new RequestOptions({ headers: theHeaders });
-        let observable = this.http.get('/service/repository', options);
+        let observable = this.http.get('/service/annotations/progress', options);
         return observable
             .map(this.extractData)
             .catch(this.handleError);
@@ -22,9 +22,10 @@ export class RepositoryService {
         let body = res.json();
         let result: Array<Bundle> = [];
         if (body) {
-            body.forEach((name) => {
+            body.forEach((obj) => {
+                
                 result.push(
-                    new Bundle(name, name));
+                    new Bundle(obj.bundle, obj.bundle, obj.progress));
             });
         }
         return result || new Array<Bundle>();

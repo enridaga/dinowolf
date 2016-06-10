@@ -7,7 +7,9 @@ import {Http} from 'angular2/http';
 @Component({
     template: `
 <h1 *ngIf="name">{{name}}</h1>
-<div *ngIf="workflow"><strong>Workflow:</strong> 
+<a href="{{link}}" target="_myexperiments">{{link}}</a>
+<div *ngIf="workflow">
+    <strong>Workflow:</strong> 
     <span *ngIf="workflow.title">{{workflow.title}}</span>
     <span *ngIf="!workflow.title">{{workflow.name}}</span>
 </div>
@@ -35,6 +37,7 @@ import {Http} from 'angular2/http';
 export class WorkflowDetailsComponent {
     name : string;
     workflow: Workflow;
+    link: string;
     features: Features;
     errorMessage: string;
     constructor(public http: Http, 
@@ -44,9 +47,9 @@ export class WorkflowDetailsComponent {
         private _service: WorkflowDetailsService){ }     
     ngOnInit() {
         this.name = this._params.get('name');
-        console.log("workflow name:",this.name);
         // workflow
-        this._service.getWorkflow(name).subscribe(
+        this.link = "http://www.myexperiment.org/workflows/" + this.name.slice(0, this.name.indexOf('-'));
+        this._service.getWorkflow(this.name).subscribe(
             workflow => this.workflow = workflow,
             error => this.errorMessage = <any>error);
         // features

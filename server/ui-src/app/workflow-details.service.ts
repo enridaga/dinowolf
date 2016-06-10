@@ -10,6 +10,7 @@ export class WorkflowDetailsService {
         let theHeaders = new Headers();
         theHeaders.append("Accept", "application/json");
         let options = new RequestOptions({ headers: theHeaders });
+        console.log("workflow bobby", name);
         let observable = this.http.get('/service/workflow/' + name, options);
         let o = observable
             .map(this.extractWorkflowData);

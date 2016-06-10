@@ -36,7 +36,7 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
                     var theHeaders = new http_1.Headers();
                     theHeaders.append("Accept", "application/json");
                     var options = new http_1.RequestOptions({ headers: theHeaders });
-                    var observable = this.http.get('/service/repository', options);
+                    var observable = this.http.get('/service/annotations/progress', options);
                     return observable
                         .map(this.extractData)
                         .catch(this.handleError);
@@ -48,8 +48,8 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
                     var body = res.json();
                     var result = [];
                     if (body) {
-                        body.forEach(function (name) {
-                            result.push(new app_models_1.Bundle(name, name));
+                        body.forEach(function (obj) {
+                            result.push(new app_models_1.Bundle(obj.bundle, obj.bundle, obj.progress));
                         });
                     }
                     return result || new Array();
