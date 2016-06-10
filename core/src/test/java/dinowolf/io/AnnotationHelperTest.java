@@ -20,9 +20,13 @@ public class AnnotationHelperTest {
 	@Test
 	public void test() throws ReaderException, IOException{
 		WorkflowBundleIO io = new WorkflowBundleIO();
-		WorkflowBundle wb = io.readBundle(__f("A_graphical_plot_of_White_Ash__Beech__and_Hemlock_populations_in_Onondaga_County__NY-v1.wfbundle"), null);
+		WorkflowBundle wb = io.readBundle(__f("3291-Net_reproductive_rate__Ro_-v2.wfbundle"), null);
 		AnnotationHelper h = new AnnotationHelper(wb);
 		String title = h.getTitle(wb.getMainWorkflow());
-		l.info("reading title: {}", title);
+		l.info("reading workflow title: {}", title);
+		String description = h.getDescription(wb.getMainWorkflow());
+		l.info("reading workflow description: {}", description);
 	}
+	
+	
 }

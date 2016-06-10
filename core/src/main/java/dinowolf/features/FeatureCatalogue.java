@@ -173,12 +173,28 @@ public final class FeatureCatalogue {
 		return Annotation("FromPortDescription", value, FeatureDepth.From, true);
 	}
 
+	public Feature FromLinkedPortTitle(String value) {
+		return Annotation("FromLinkedPortTitle", value, FeatureDepth.From, true);
+	}
+
+	public Feature FromLinkedPortDescription(String value) {
+		return Annotation("FromLinkedPortDescription", value, FeatureDepth.From, true);
+	}
+
 	public Feature ToPortTitle(String value) {
 		return Annotation("ToPortTitle", value, FeatureDepth.To, true);
 	}
 
 	public Feature ToPortDescription(String value) {
 		return Annotation("ToPortDescription", value, FeatureDepth.To, true);
+	}
+
+	public Feature ToLinkedPortTitle(String value) {
+		return Annotation("ToLinkedPortTitle", value, FeatureDepth.To, true);
+	}
+
+	public Feature ToLinkedPortDescription(String value) {
+		return Annotation("ToLinkedPortDescription", value, FeatureDepth.To, true);
 	}
 
 	public Feature OtherInputPortTitle(String value) {

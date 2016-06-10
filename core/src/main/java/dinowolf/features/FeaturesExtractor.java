@@ -8,7 +8,10 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.taverna.scufl2.api.configurations.Configuration;
+import org.apache.taverna.scufl2.api.core.DataLink;
+import org.apache.taverna.scufl2.api.port.InputPort;
 import org.apache.taverna.scufl2.api.port.InputProcessorPort;
+import org.apache.taverna.scufl2.api.port.OutputPort;
 import org.apache.taverna.scufl2.api.port.OutputProcessorPort;
 import org.apache.taverna.scufl2.api.profiles.Profile;
 import org.slf4j.Logger;
@@ -53,12 +56,31 @@ class FeaturesExtractor {
 		features.add(F.FromPortName(inOut.from().getName()));
 		safeAdd(features, F.FromPortTitle(anno.getTitle(inOut.from())));
 		safeAdd(features, F.FromPortDescription(anno.getDescription(inOut.from())));
-
+		// Inherit from Workflow InputPort if any
+		for(DataLink dl:inOut.processor().getParent().getDataLinks()){
+			for(InputPort win: inOut.processor().getParent().getInputPorts()){
+				if(inOut.from().equals(dl.getSendsTo()) && dl.getReceivesFrom().equals(win)){
+					l.debug("FOUND: {}", dl);
+					safeAdd(features, F.FromLinkedPortTitle(anno.getTitle(win)));
+					safeAdd(features, F.FromLinkedPortDescription(anno.getDescription(win)));
+				}
+			}
+		}
+		
 		// To
 		features.add(F.ToPortName(inOut.to().getName()));
 		safeAdd(features, F.ToPortTitle(anno.getTitle(inOut.to())));
 		safeAdd(features, F.ToPortDescription(anno.getDescription(inOut.to())));
-
+		// Inherit from Workflow InputPort if any
+		for(DataLink dl:inOut.processor().getParent().getDataLinks()){
+			for(OutputPort win: inOut.processor().getParent().getOutputPorts()){
+				if(inOut.to().equals(dl.getReceivesFrom()) && dl.getSendsTo().equals(win)){
+					l.debug("FOUND: {}", dl);
+					safeAdd(features, F.ToLinkedPortTitle(anno.getTitle(win)));
+					safeAdd(features, F.ToLinkedPortDescription(anno.getDescription(win)));
+				}
+			}
+		}
 		// Roles
 		features.add(F.FromToType(inOut.roleFrom() + inOut.roleTo()));
 

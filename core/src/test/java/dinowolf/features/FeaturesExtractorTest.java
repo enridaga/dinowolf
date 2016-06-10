@@ -36,4 +36,17 @@ public class FeaturesExtractorTest {
 			l.info("{}", E.extract(i));
 		}
 	}
+	
+	@Test
+	public void features() throws ReaderException, IOException {
+		WorkflowBundleIO io = new WorkflowBundleIO();
+		WorkflowBundle wb = io.readBundle(
+				__f("3291-Net_reproductive_rate__Ro_-v2.wfbundle"),
+				null);
+		FeaturesHashMap map = FeaturesMapExtractor.extract("3291-Net_reproductive_rate__Ro_-v2.wfbundle", wb, FromTo.FromToType.IO);
+		for(Feature f : map.allFeatures()){
+			l.info("{}", f);
+		}
+	}
+	
 }

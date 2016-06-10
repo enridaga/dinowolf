@@ -62,7 +62,7 @@ public class AnnotationHelper {
 		return dataset;
 	}
 	
-	private String getLiteral(Child<?> workflowBean, String propertyUri) {
+	private String getLiteral(WorkflowBean workflowBean, String propertyUri) {
 		URI beanUri = uriTools.uriForBean(workflowBean);
 		Node subject = NodeFactory.createURI(beanUri.toString());
 		Node property = NodeFactory.createURI(propertyUri);
@@ -76,15 +76,15 @@ public class AnnotationHelper {
 	}
 
 	public String getTitle(WorkflowBean bean) {
-		return getLiteral((Child<?>) bean, AnnotationTools.TITLE.toString());
+		return getLiteral( bean, AnnotationTools.TITLE.toString());
 	}
 
 	public String getDescription(WorkflowBean bean) {
-		return getLiteral((Child<?>) bean, AnnotationTools.DESCRIPTION.toString());
+		return getLiteral( bean, AnnotationTools.DESCRIPTION.toString());
 	}
 
 	public String getCreator(WorkflowBean bean) {
-		return getLiteral((Child<?>) bean, AnnotationTools.CREATOR.toString());
+		return getLiteral( bean, AnnotationTools.CREATOR.toString());
 	}
 
 	public final static void parseAnnotations(final WorkflowBundle wb) throws IOException {

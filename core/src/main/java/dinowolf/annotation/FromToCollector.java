@@ -8,6 +8,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
+import org.apache.taverna.scufl2.api.core.BlockingControlLink;
+import org.apache.taverna.scufl2.api.core.ControlLink;
+import org.apache.taverna.scufl2.api.core.DataLink;
 import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.port.Port;
@@ -25,7 +28,13 @@ public class FromToCollector {
 
 	public Map<String, FromTo> getMap(String bundleId, WorkflowBundle bundle) {
 		Map<String, FromTo> map = new HashMap<String, FromTo>();
+		
 		for (Workflow w : bundle.getWorkflows()) {
+//			for(ControlLink k : w.getControlLinks()){
+//				BlockingControlLink bcl = (BlockingControlLink) k;
+//			}
+//			
+			// TODO capture wf input/output ports and map them to
 			for (Processor processor : w.getProcessors()) {
 				Set<Port> allPorts = new HashSet<Port>();
 				allPorts.addAll(processor.getInputPorts());
