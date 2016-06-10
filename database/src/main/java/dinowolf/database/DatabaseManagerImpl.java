@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
@@ -36,7 +37,7 @@ class DatabaseManagerImpl implements DatabaseManager {
 	private Repository repository;
 	private FeaturesDatabase features;
 	private Lattice lattice;
-	private Annotations logger;
+	private Annotations annotations;
 
 	private static final Logger l = LoggerFactory.getLogger(DatabaseManagerImpl.class);
 
@@ -48,7 +49,7 @@ class DatabaseManagerImpl implements DatabaseManager {
 		// Features, lattice and logs are in the same database
 		this.features = new FeaturesDatabaseH2(new File(home, "metadata"));
 		this.lattice = new LatticeInMemory();
-		this.logger = new AnnotationsLoggerH2(new File(home, "metadata"));
+		this.annotations = new AnnotationsLoggerH2(new File(home, "metadata"));
 		initLattice();
 	}
 
@@ -107,11 +108,11 @@ class DatabaseManagerImpl implements DatabaseManager {
 		List<Object> features = new ArrayList<Object>();
 		for (Feature f : set) {
 			String feature = featureToAttribute((FeatureH2) f);
-			//l.debug("{} >> {}", f, feature);
+			// l.debug("{} >> {}", f, feature);
 			features.add(feature);
 		}
 		try {
-			//l.debug("{} ", features);
+			// l.debug("{} ", features);
 			return Arrays.asList(rules.rules(inHead, features.toArray()));
 		} catch (ColattiException e) {
 			throw new IOException(e);
@@ -138,32 +139,35 @@ class DatabaseManagerImpl implements DatabaseManager {
 	public void annotate(String bundleId, String portPairName, List<String> annotations, List<Rule> recommended)
 			throws IOException {
 		if (insertInLattice(bundleId, portPairName, annotations)) {
-			logger.annotate(bundleId, portPairName, annotations, recommended);
+			this.annotations.annotate(bundleId, portPairName, annotations, recommended);
 		}
 	}
-	
-	private boolean insertInLattice(String bundleId, String portPairName, List<String> annotations) throws IOException{
+
+	private boolean insertInLattice(String bundleId, String portPairName, List<String> annotations) throws IOException {
 		InsertObject insert = new InsertObject(lattice);
 		boolean valid;
 		try {
 			Set<String> attributes = featuresToAttributes(features.getFeatures(bundleId, portPairName));
 			attributes.addAll(annotations);
+			if (l.isTraceEnabled()) {
+				l.trace("{} {} {}", bundleId, portPairName, attributes.toArray());
+			}
 			valid = insert.perform(portPairName, attributes.toArray());
 		} catch (ColattiException e) {
 			throw new IOException(e);
 		}
-		
+
 		return valid;
 	}
-	
-	private void initLattice() throws IOException{
-		
+
+	private void initLattice() throws IOException {
+
 		// Load each element in the lattice
-		logger.walk(new AnnotationsWalker() {
-			
+		annotations.walk(new AnnotationsWalker() {
+
 			@Override
 			public boolean read(String bundleId, String portPairName, List<String> annotations) throws IOException {
-				l.trace(" <init> {} {} ", portPairName);
+				l.info(" <init> {} {} {} ", bundleId, portPairName, annotations);
 				insertInLattice(bundleId, portPairName, annotations);
 				return true;
 			}
@@ -172,11 +176,10 @@ class DatabaseManagerImpl implements DatabaseManager {
 
 	@Override
 	public void skipAnnotations(String bundleId, String portPairName, List<Rule> recommended) throws IOException {
-		// Don't add to lattice and register item has been skipped		
-		logger.skipAnnotations(bundleId, portPairName, recommended);
+		// Don't add to lattice and register item has been skipped
+		annotations.skipAnnotations(bundleId, portPairName, recommended);
 	}
 
-	
 	@Override
 	public void noAnnotations(String bundleId, String portPairName, List<Rule> recommended) throws IOException {
 		// Add to lattice without annotations
@@ -184,18 +187,43 @@ class DatabaseManagerImpl implements DatabaseManager {
 
 		boolean valid;
 		try {
-			valid = insert.perform(portPairName, featuresToAttributes(features.getFeatures(bundleId, portPairName)).toArray());
+			valid = insert.perform(portPairName,
+					featuresToAttributes(features.getFeatures(bundleId, portPairName)).toArray());
 		} catch (ColattiException e) {
 			throw new IOException(e);
 		}
 		if (valid) {
-			logger.noAnnotations(bundleId, portPairName, recommended);
+			annotations.noAnnotations(bundleId, portPairName, recommended);
 		}
 	}
 
 	@Override
 	public void walk(AnnotationsWalker walker) throws IOException {
-		logger.walk(walker);
+		annotations.walk(walker);
 	}
 
+	@Override
+	public List<String> annotations(String portPairName) throws IOException {
+		return annotations.annotations(portPairName);
+	}
+
+	@Override
+	public Lattice lattice() {
+		return lattice;
+	}
+
+	@Override
+	public List<String> annotating() throws IOException {
+		return annotations.annotating();
+	}
+
+	@Override
+	public List<String> neverAnnotated() throws IOException {
+		return annotations.neverAnnotated();
+	}
+	@Override
+	public Map<String, Integer> progress() throws IOException {
+		return annotations.progress();
+	}
+	
 }

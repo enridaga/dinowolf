@@ -213,6 +213,7 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 
 	@Override
 	public FeatureSet getFeatures(String bundleId, String portPair) throws IOException {
+		l.trace("{} {}", bundleId, portPair);
 		int dbId = getBundleIdByName(bundleId);
 		try (Connection conn = getConnection();
 				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_FEATURES_OF_PORTPAIR)) {
@@ -224,6 +225,7 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 				set.add(new FeatureH2(rs.getInt(7), rs.getString(3), rs.getString(4), H2Queries.toFeatureLevel(rs.getInt(5)),
 						rs.getBoolean(6)));
 			}
+			l.trace("features: {}", set);
 			return set;
 		} catch (SQLException e) {
 			l.error("SQL Exception", e.getMessage());
