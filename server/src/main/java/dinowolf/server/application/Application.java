@@ -63,17 +63,28 @@ public class Application extends ResourceConfig implements ServletContextListene
 			log.info("Loading data from {}", loaddir);
 			try {
 				if (loaddir.isDirectory() && loaddir.canRead()) {
-					File[] fff = loaddir.listFiles(new FilenameFilter() {
+					FilenameFilter wfbundle = new FilenameFilter() {
 						@Override
 						public boolean accept(File dir, String name) {
 							return name.endsWith(".wfbundle");
 						}
-					});
+					};
+					File[] fff = loaddir.listFiles(wfbundle);
 					int c = 0;
 					for (File f : fff) {
+						// If file is a directory, then skip it
+						if(f.isDirectory()){
+							// Skip this
+							log.error("SKIPPING {}", f);
+							continue;
+						}
 						c++;
-						String id = manager.put(f, true);
-						log.info("Loaded {}/{}: {}", c, fff.length, id);
+						try {
+							String id = manager.put(f, false);
+							log.info("Loaded {}/{}: {}", c, fff.length, id);
+						} catch (Exception e) {
+							log.error("An error occurred while attemping to load " + f, e);
+						}
 					}
 				}
 			} catch (Exception e) {
@@ -110,6 +121,10 @@ public class Application extends ResourceConfig implements ServletContextListene
 				}
 			}
 			log.info("Build features completed.");
+			/**
+			 * FIXME
+			 */
+			log.warn("Should rebuild Lattice. FIXME");
 		}
 	}
 

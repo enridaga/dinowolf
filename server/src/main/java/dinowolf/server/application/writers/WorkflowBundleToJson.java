@@ -32,23 +32,27 @@ public class WorkflowBundleToJson extends PackedWriter<WorkflowBundle> {
 	public void writeTo(final WorkflowBundle t, Class<?> type, Type genericType, Annotation[] annotations,
 			MediaType mediaType, MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
 			throws IOException, WebApplicationException {
-		l.debug("Writing {} to json ({} annotations)", type, t.getAnnotations().size());
-		for(org.apache.taverna.scufl2.api.annotation.Annotation a: t.getAnnotations()){
-			l.debug("path: {}",a.getBody().getPath());
-			l.debug("uri: {}",a.getURI());
-			// get it
-			l.debug("entry {}",  t.getResources().getResourceEntry(a.getBody().getPath()));
-		}
-		
 		final JsonWriter w = getWriter(entityStream);
 		w.beginObject();
 		w.name("name").value(t.getName());
+		l.trace("name: ", t.getName());
 		AnnotationHelper tools = new AnnotationHelper(t);
 		w.name("title");
+//		if(l.isTraceEnabled()){
+//			l.trace("1: ", t.getName());
+//			l.trace("2: ", tools.getTitle(t.getMainProfile()));
+//			l.trace("3: ", tools.getTitle(t.getMainWorkflow()));
+//		}
 		w.value(tools.getTitle(t.getMainWorkflow()));
 		w.name("description");
+//		if(l.isTraceEnabled()){
+//			l.trace("description: {}", tools.getDescription(t.getMainWorkflow()));
+//		}
 		w.value(tools.getDescription(t.getMainWorkflow()));
 		w.name("creator");
+//		if(l.isTraceEnabled()){
+//			l.trace("creator: {}", tools.getCreator(t.getMainWorkflow()));
+//		}
 		w.value(tools.getCreator(t.getMainWorkflow()));
 		w.endObject();
 		w.close();
