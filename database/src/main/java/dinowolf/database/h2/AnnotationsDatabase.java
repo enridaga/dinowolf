@@ -7,7 +7,7 @@ import java.util.Map;
 import dinowolf.database.annotations.AnnotationAction;
 import enridaga.colatti.Rule;
 
-public interface Annotations {
+public interface AnnotationsDatabase {
 
 	/**
 	 * 

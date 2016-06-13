@@ -24,7 +24,7 @@ import com.google.gson.JsonParser;
 import dinowolf.database.annotations.AnnotationAction;
 import enridaga.colatti.Rule;
 
-public class AnnotationsLoggerH2 extends H2Connected implements Annotations {
+public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatabase {
 	static private final Logger l = LoggerFactory.getLogger(AnnotationsLoggerH2.class);
 	static {
 		try {
@@ -63,7 +63,7 @@ public class AnnotationsLoggerH2 extends H2Connected implements Annotations {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see dinowolf.database.h2.Annotations#noAnnotations(java.lang.String,
+	 * @see dinowolf.database.h2.AnnotationsDatabase#noAnnotations(java.lang.String,
 	 * java.lang.String, java.util.List)
 	 */
 	@Override
@@ -75,7 +75,7 @@ public class AnnotationsLoggerH2 extends H2Connected implements Annotations {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see dinowolf.database.h2.Annotations#skipAnnotations(java.lang.String,
+	 * @see dinowolf.database.h2.AnnotationsDatabase#skipAnnotations(java.lang.String,
 	 * java.lang.String, java.util.List)
 	 */
 	@Override
@@ -87,7 +87,7 @@ public class AnnotationsLoggerH2 extends H2Connected implements Annotations {
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see dinowolf.database.h2.Annotations#annotate(java.lang.String,
+	 * @see dinowolf.database.h2.AnnotationsDatabase#annotate(java.lang.String,
 	 * java.lang.String, java.util.List, java.util.List)
 	 */
 	@Override

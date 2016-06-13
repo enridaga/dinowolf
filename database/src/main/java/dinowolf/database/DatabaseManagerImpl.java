@@ -15,7 +15,7 @@ import org.slf4j.LoggerFactory;
 
 import datanode.dsl.DNGraph;
 import dinowolf.database.features.FeaturesDatabase;
-import dinowolf.database.h2.Annotations;
+import dinowolf.database.h2.AnnotationsDatabase;
 import dinowolf.database.h2.AnnotationsLoggerH2;
 import dinowolf.database.h2.AnnotationsWalker;
 import dinowolf.database.h2.FeaturesDatabaseH2;
@@ -37,7 +37,7 @@ class DatabaseManagerImpl implements DatabaseManager {
 	private Repository repository;
 	private FeaturesDatabase features;
 	private Lattice lattice;
-	private Annotations annotations;
+	private AnnotationsDatabase annotations;
 
 	private static final Logger l = LoggerFactory.getLogger(DatabaseManagerImpl.class);
 
@@ -74,8 +74,9 @@ class DatabaseManagerImpl implements DatabaseManager {
 		return features.getFeatures();
 	}
 
-	public FeaturesMap getFeatures(String bundleId) throws IOException {
-		return getFeatures(bundleId, repository.get(bundleId));
+	@Override
+	public Map<String,FeatureSet> getFeatures(String bundleId) throws IOException {
+		return getFeatures(bundleId);
 	}
 
 	@Override
@@ -225,5 +226,7 @@ class DatabaseManagerImpl implements DatabaseManager {
 	public Map<String, Integer> progress() throws IOException {
 		return annotations.progress();
 	}
+	
+	
 	
 }

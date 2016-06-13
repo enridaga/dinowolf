@@ -8,6 +8,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -66,7 +67,6 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 
 	@Override
 	public FeatureSet getFeatures() throws IOException {
-
 		try (Connection conn = getConnection();
 				ResultSet rs = conn.createStatement().executeQuery(H2Queries.SELECT_ALL_FEATURES)) {
 			FeatureHashSet set = new FeatureHashSet();
@@ -242,6 +242,30 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 			}
 			l.trace("features: {}", set);
 			return set;
+		} catch (SQLException e) {
+			l.error("SQL Exception", e.getMessage());
+			throw new IOException(e);
+		}
+	}
+	
+	@Override
+	public Map<String, FeatureSet> getFeatures(String bundleId) throws IOException {
+		
+		try (Connection conn = getConnection();
+				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_FEATURES_OF_BUNDLE)) {
+			st.setInt(1, getBundleIdByName(bundleId));
+			ResultSet rs = st.executeQuery();
+			Map<String, FeatureSet> map = new HashMap<String, FeatureSet>();
+			while (rs.next()) {
+				String portpairId = rs.getString(1);
+				
+				if (!map.containsKey(portpairId)) {
+					map.put(portpairId, new FeatureHashSet());
+				}
+				map.get(portpairId).add(new FeatureH2(rs.getInt(7),rs.getString(3), rs.getString(4),
+						H2Queries.toFeatureLevel(rs.getInt(5)), rs.getBoolean(6)));
+			}
+			return map;
 		} catch (SQLException e) {
 			l.error("SQL Exception", e.getMessage());
 			throw new IOException(e);

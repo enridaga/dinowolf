@@ -1,6 +1,7 @@
 package dinowolf.database.features;
 
 import java.io.IOException;
+import java.util.Map;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
 
@@ -24,4 +25,5 @@ public interface FeaturesDatabase {
 	
 	public FeatureSet getFeatures(String bundleId, String portPair) throws IOException;
 	
+	public Map<String,FeatureSet> getFeatures(String bundleId) throws IOException;
 }
