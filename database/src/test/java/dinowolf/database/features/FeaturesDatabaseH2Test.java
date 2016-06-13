@@ -36,7 +36,7 @@ public class FeaturesDatabaseH2Test {
 
 	@Before
 	public void before() throws IOException, SQLException {
-		l.debug(">>> {} <<<", name.getMethodName());
+		l.debug("{}", name.getMethodName());
 		connectionUrl = "jdbc:h2:file:" + testFolder.newFolder().getAbsolutePath() + "/H2Test";
 		l.debug("Connection url: {}", connectionUrl);
 		
@@ -66,6 +66,7 @@ public class FeaturesDatabaseH2Test {
 		
 		FeaturesMap map = FeaturesMapExtractor.extract(bundleFile, bundle);
 		h2.put(bundleFile, map);
+		// Put twice, should just update
 		
 		FeaturesMap read = h2.getFeatures(bundleFile, bundle);
 		
@@ -77,6 +78,28 @@ public class FeaturesDatabaseH2Test {
 			Assert.assertTrue(fs2.containsAll(fs1));
 			Assert.assertTrue(fs1.containsAll(fs2));
 		}
+	}
+	
+	@Test
+	public void update() throws ReaderException, IOException{
+		FeaturesDatabaseH2 h2 = new FeaturesDatabaseH2(testFolder.newFolder("test"), "H2Test", user, pwd);
+		Assert.assertTrue(h2.getFeatures().size() == 0);
 		
+		String bundleFile = "ADR-S-v2";
+		
+		WorkflowBundleIO io = new WorkflowBundleIO();
+		WorkflowBundle bundle = io
+				.readBundle(getClass().getClassLoader().getResourceAsStream("./" + bundleFile + ".wfbundle"), null);
+		
+		FeaturesMap map = FeaturesMapExtractor.extract(bundleFile, bundle);
+		h2.put(bundleFile, map);
+		Exception e = null;
+		try {
+			h2.put(bundleFile, map);
+		} catch (Exception e2) {
+			e = e2;
+		}
+		
+		Assert.assertNull("A new put should override the data and not raise any exception", e);
 	}
 }

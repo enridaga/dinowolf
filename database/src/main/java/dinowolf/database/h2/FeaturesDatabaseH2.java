@@ -118,6 +118,8 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 				conn.setAutoCommit(false);
 				try (PreparedStatement deleteBundle = conn.prepareStatement(H2Queries.DELETE_BUNDLE)) {
 					deleteBundle.setString(1, bundle);
+					int rows = deleteBundle.executeUpdate();
+					l.trace("{} rows updated", rows);
 				}
 				int bundleDbId = insertBundle(bundle, conn);
 				l.debug("inserted bundle db id: {}", bundleDbId);
@@ -178,26 +180,30 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 	}
 
 	private int insertBundle(String bundle, Connection conn) throws IOException {
-		int bundleDbId = getBundleIdByName(bundle);
+		l.trace("insertBundle {} ", bundle);
+		int bundleDbId = getBundleIdByName(bundle, conn);
 		if (bundleDbId == 0) {
+			l.trace("insertBundle - bundle does not exists, go insert {} ", bundle);
 			try (PreparedStatement stm = conn.prepareStatement(H2Queries.INSERT_BUNDLE,
 					Statement.RETURN_GENERATED_KEYS)) {
 				stm.setString(1, bundle);
 				stm.execute();
 				ResultSet generated = stm.getGeneratedKeys();
-				generated.next();
-				bundleDbId = generated.getInt(1);
+				if(!generated.next()){
+					throw new IOException("Generated key is missing");
+				}
+				bundleDbId = generated.getInt(1); // FIXME
 			} catch (SQLException e) {
 				l.error("SQL Exception", e.getMessage());
 				throw new IOException(e);
 			}
 		}
+		l.trace("insertBundle - generated db id {} ", bundleDbId);
 		return bundleDbId;
 	}
 
-	private int getBundleIdByName(String name) throws IOException {
-		try (Connection conn = getConnection();
-				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_BUNDLE_ID_BY_NAME)) {
+	private int getBundleIdByName(String name, Connection conn) throws IOException {
+		try (PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_BUNDLE_ID_BY_NAME)) {
 			st.setString(1, name);
 			ResultSet rs = st.executeQuery();
 			if (rs.next()) {
@@ -205,6 +211,15 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 			} else {
 				return 0;
 			}
+		} catch (SQLException e) {
+			l.error("SQL Exception", e.getMessage());
+			throw new IOException(e);
+		}
+	}
+	
+	public int getBundleIdByName(String name) throws IOException {
+		try (Connection conn = getConnection()){
+				return getBundleIdByName(name, conn);
 		} catch (SQLException e) {
 			l.error("SQL Exception", e.getMessage());
 			throw new IOException(e);
