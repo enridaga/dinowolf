@@ -36,8 +36,8 @@ public class AnnotationResource extends AbstractResource {
 	@GET
 	public Response list() throws IOException {
 		log.debug("GET {} {}", getBundleId(), getFromTo());
-		List<String> rules = getManager().annotations(getFromTo());
-		return Response.ok(AnnotationsLoggerH2.toJsonString(rules)).build();
+		List<String> list = getManager().annotations(getFromTo());
+		return Response.ok(AnnotationsLoggerH2.toJsonString(list)).build();
 	}
 
 	@POST
