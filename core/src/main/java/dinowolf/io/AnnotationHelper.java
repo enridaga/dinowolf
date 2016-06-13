@@ -18,7 +18,6 @@ import org.apache.jena.riot.RDFLanguages;
 import org.apache.jena.sparql.core.Quad;
 import org.apache.taverna.scufl2.annotation.AnnotationTools;
 import org.apache.taverna.scufl2.api.annotation.Annotation;
-import org.apache.taverna.scufl2.api.common.Child;
 import org.apache.taverna.scufl2.api.common.URITools;
 import org.apache.taverna.scufl2.api.common.WorkflowBean;
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;

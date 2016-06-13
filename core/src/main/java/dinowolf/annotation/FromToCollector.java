@@ -8,9 +8,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
-import org.apache.taverna.scufl2.api.core.BlockingControlLink;
-import org.apache.taverna.scufl2.api.core.ControlLink;
-import org.apache.taverna.scufl2.api.core.DataLink;
 import org.apache.taverna.scufl2.api.core.Processor;
 import org.apache.taverna.scufl2.api.core.Workflow;
 import org.apache.taverna.scufl2.api.port.Port;
