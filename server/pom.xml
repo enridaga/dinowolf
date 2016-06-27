@@ -82,6 +82,10 @@
 			<groupId>datanode</groupId>
 			<artifactId>dsl</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>dinowolf</groupId>
+			<artifactId>features</artifactId>
+		</dependency>
 	</dependencies>
 	<build>
 		<plugins>
