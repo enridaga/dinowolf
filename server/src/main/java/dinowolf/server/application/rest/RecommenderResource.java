@@ -2,15 +2,12 @@ package dinowolf.server.application.rest;
 
 import java.io.IOException;
 import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import dinowolf.database.h2.AnnotationsLoggerH2;
 import enridaga.colatti.Rule;
 

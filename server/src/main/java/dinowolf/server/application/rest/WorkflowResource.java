@@ -1,6 +1,8 @@
 package dinowolf.server.application.rest;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -15,6 +17,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.gson.Gson;
 
+import dinowolf.features.FeatureSet;
 import dinowolf.features.FeaturesMap;
 
 @Path("workflow/{id}")
@@ -45,6 +48,16 @@ public class WorkflowResource extends AbstractResource {
 		log.debug("GET {} features", id);
 		WorkflowBundle bundle = getManager().get(getId());
 		FeaturesMap map = getManager().getFeatures(getId(), bundle);
+		return Response.ok(new Gson().toJson(map)).build();
+	}
+
+	@GET
+	@Path("/features/{portpair: .*}")
+	public Response features(@PathParam("portpair") String portpair) throws IOException {
+		log.debug("GET {} {} features", id, portpair);
+		FeatureSet set = getManager().getFeatures(getId(), portpair);
+		Map<String,FeatureSet> map = new HashMap<String,FeatureSet>();
+		map.put(portpair, set);
 		return Response.ok(new Gson().toJson(map)).build();
 	}
 

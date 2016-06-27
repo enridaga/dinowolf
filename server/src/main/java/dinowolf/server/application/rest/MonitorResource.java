@@ -54,5 +54,4 @@ public class MonitorResource extends AbstractResource {
 		}
 		return Response.ok(new Gson().toJson(o)).build();
 	}
-	
 }
