@@ -20,6 +20,7 @@ import dinowolf.database.h2.AnnotationsLoggerH2;
 import dinowolf.database.h2.AnnotationsWalker;
 import dinowolf.database.h2.FeaturesDatabaseH2;
 import dinowolf.database.h2.FeaturesDatabaseH2.FeatureH2;
+import dinowolf.database.h2.LogWalker;
 import dinowolf.database.repository.FileRepository;
 import dinowolf.database.repository.Repository;
 import dinowolf.features.Feature;
@@ -137,10 +138,10 @@ class DatabaseManagerImpl implements DatabaseManager {
 	}
 
 	@Override
-	public void annotate(String bundleId, String portPairName, List<String> annotations, List<Rule> recommended)
+	public void annotate(String bundleId, String portPairName, List<String> annotations, List<Rule> recommended, int duration)
 			throws IOException {
 		if (insertInLattice(bundleId, portPairName, annotations)) {
-			this.annotations.annotate(bundleId, portPairName, annotations, recommended);
+			this.annotations.annotate(bundleId, portPairName, annotations, recommended, duration);
 		}
 	}
 
@@ -176,13 +177,13 @@ class DatabaseManagerImpl implements DatabaseManager {
 	}
 
 	@Override
-	public void skipAnnotations(String bundleId, String portPairName, List<Rule> recommended) throws IOException {
+	public void skipAnnotations(String bundleId, String portPairName, List<Rule> recommended, int duration) throws IOException {
 		// Don't add to lattice and register item has been skipped
-		annotations.skipAnnotations(bundleId, portPairName, recommended);
+		annotations.skipAnnotations(bundleId, portPairName, recommended, duration);
 	}
 
 	@Override
-	public void noAnnotations(String bundleId, String portPairName, List<Rule> recommended) throws IOException {
+	public void noAnnotations(String bundleId, String portPairName, List<Rule> recommended, int duration) throws IOException {
 		// Add to lattice without annotations
 		InsertObject insert = new InsertObject(lattice);
 
@@ -194,7 +195,7 @@ class DatabaseManagerImpl implements DatabaseManager {
 			throw new IOException(e);
 		}
 		if (valid) {
-			annotations.noAnnotations(bundleId, portPairName, recommended);
+			annotations.noAnnotations(bundleId, portPairName, recommended, duration);
 		}
 	}
 
@@ -202,10 +203,20 @@ class DatabaseManagerImpl implements DatabaseManager {
 	public void walk(AnnotationsWalker walker) throws IOException {
 		annotations.walk(walker);
 	}
+	
+	@Override
+	public void walk(LogWalker walker) throws IOException {
+		annotations.walk(walker);
+	}
 
 	@Override
 	public List<String> annotations(String portPairName) throws IOException {
 		return annotations.annotations(portPairName);
+	}
+	
+	@Override
+	public boolean annotated(String portPairName) throws IOException {
+		return annotations.annotated(portPairName);
 	}
 
 	@Override
@@ -226,7 +237,9 @@ class DatabaseManagerImpl implements DatabaseManager {
 	public Map<String, Integer> progress() throws IOException {
 		return annotations.progress();
 	}
-	
-	
-	
+
+	@Override
+	public Map<String, List<String>> bundleAnnotations(String bundleId) throws IOException {
+		return annotations.bundleAnnotations(bundleId);
+	}
 }

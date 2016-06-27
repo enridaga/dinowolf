@@ -75,7 +75,7 @@ public class DatabaseManagerTest {
 			WorkflowBundle b = manager.get(bundleId);
 			FeaturesMap map = manager.getFeatures(bundleId, b);
 			for (Entry<FromTo, FeatureSet> pair : map.entrySet()) {
-				manager.annotate(bundleId, pair.getKey().getId(), Arrays.asList(annotation), Collections.emptyList());
+				manager.annotate(bundleId, pair.getKey().getId(), Arrays.asList(annotation), Collections.emptyList(), 1);
 			}
 		}
 

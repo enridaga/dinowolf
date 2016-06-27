@@ -18,7 +18,7 @@ public interface AnnotationsDatabase {
 	 * @param recommended
 	 * @throws IOException
 	 */
-	void noAnnotations(String bundleId, String portPairName, List<Rule> recommended) throws IOException;
+	void noAnnotations(String bundleId, String portPairName, List<Rule> recommended, int duration) throws IOException;
 
 	/**
 	 * 
@@ -29,7 +29,7 @@ public interface AnnotationsDatabase {
 	 * @param recommended
 	 * @throws IOException
 	 */
-	void skipAnnotations(String bundleId, String portPairName, List<Rule> recommended) throws IOException;
+	void skipAnnotations(String bundleId, String portPairName, List<Rule> recommended, int duration) throws IOException;
 
 	/**
 	 * 
@@ -39,14 +39,18 @@ public interface AnnotationsDatabase {
 	 * @param annotations - If empty, considered as {@link AnnotationAction#SKIPPED}
 	 * @throws IOException
 	 */
-	void annotate(String bundleId, String portPairName, List<String> annotations, List<Rule> recommended)
+	void annotate(String bundleId, String portPairName, List<String> annotations, List<Rule> recommended, int duration)
 			throws IOException;
 	
 	void walk(AnnotationsWalker walker) throws IOException;
 	
+	void walk(LogWalker walker) throws IOException;
+	
 	List<String> annotations(String portPairName) throws IOException;
 	
 	Map<String,Integer> progress() throws IOException;
+	
+	Map<String,List<String>> bundleAnnotations(String bundleId) throws IOException;
 	
 	/**
 	 * Bundle that was partially annotated
@@ -55,4 +59,7 @@ public interface AnnotationsDatabase {
 	List<String> annotating()throws IOException;
 	
 	List<String> neverAnnotated()throws IOException;
+	
+	boolean annotated(String portPairName) throws IOException;
+	
 }

@@ -2,6 +2,7 @@ package dinowolf.database.h2;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Type;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,9 +22,11 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.google.gson.reflect.TypeToken;
 
 import dinowolf.database.annotations.AnnotationAction;
 import enridaga.colatti.Rule;
+import enridaga.colatti.RuleImpl;
 
 public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatabase {
 	static private final Logger l = LoggerFactory.getLogger(AnnotationsLoggerH2.class);
@@ -63,25 +67,26 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see dinowolf.database.h2.AnnotationsDatabase#noAnnotations(java.lang.String,
+	 * @see
+	 * dinowolf.database.h2.AnnotationsDatabase#noAnnotations(java.lang.String,
 	 * java.lang.String, java.util.List)
 	 */
 	@Override
-	public void noAnnotations(String bundleId, String portPairName, List<Rule> recommended) throws IOException {
+	public void noAnnotations(String bundleId, String portPairName, List<Rule> recommended, int duration) throws IOException {
 		AnnotationAction action = AnnotationAction.NONE;
-		_annotate(bundleId, portPairName, Collections.emptyList(), recommended, action);
+		_annotate(bundleId, portPairName, Collections.emptyList(), recommended, action, duration);
 	}
 
 	/*
 	 * (non-Javadoc)
 	 * 
-	 * @see dinowolf.database.h2.AnnotationsDatabase#skipAnnotations(java.lang.String,
-	 * java.lang.String, java.util.List)
+	 * @see dinowolf.database.h2.AnnotationsDatabase#skipAnnotations(java.lang.
+	 * String, java.lang.String, java.util.List)
 	 */
 	@Override
-	public void skipAnnotations(String bundleId, String portPairName, List<Rule> recommended) throws IOException {
+	public void skipAnnotations(String bundleId, String portPairName, List<Rule> recommended, int duration) throws IOException {
 		AnnotationAction action = AnnotationAction.SKIPPED;
-		_annotate(bundleId, portPairName, Collections.emptyList(), recommended, action);
+		_annotate(bundleId, portPairName, Collections.emptyList(), recommended, action, duration);
 	}
 
 	/*
@@ -91,7 +96,7 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 	 * java.lang.String, java.util.List, java.util.List)
 	 */
 	@Override
-	public void annotate(String bundleId, String portPairName, List<String> annotations, List<Rule> recommended)
+	public void annotate(String bundleId, String portPairName, List<String> annotations, List<Rule> recommended, int duration)
 			throws IOException {
 		// l.debug("annotate {} {} {} {}", new Object[] { bundleId,
 		// portPairName, annotations, recommended });
@@ -121,7 +126,7 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 			}
 		}
 
-		_annotate(bundleId, portPairName, annotations, recommended, action);
+		_annotate(bundleId, portPairName, annotations, recommended, action, duration);
 	}
 
 	private boolean recommended(String annotation, List<Rule> rules) {
@@ -134,7 +139,7 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 	}
 
 	private void _annotate(String bundleId, String portPairName, List<String> annotations, List<Rule> recommended,
-			AnnotationAction action) throws IOException {
+			AnnotationAction action, int duration) throws IOException {
 		l.trace("_annotate {} {} {} {} {}", new Object[] { bundleId, portPairName, annotations, recommended, action });
 		try {
 			try (Connection conn = getConnection()) {
@@ -171,6 +176,47 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 						ins.setInt(2, bundle);
 						ins.setString(3, rec);
 						ins.setString(4, H2Queries.toDbKey(action));
+						
+						// annotations
+						ins.setInt(5, annotations.size());
+						// duration
+						ins.setInt(6, duration);
+						// fromrec
+						List<String> fromRec = new ArrayList<String>();
+						List<Integer> ranks = new ArrayList<Integer>();
+						List<Double> rel = new ArrayList<Double>();
+						for(String a: annotations) {
+							int rank = 0;
+							for(Rule r: recommended){
+								rank++;
+								if(Arrays.asList(r.head()).contains(a)){
+									fromRec.add(a);
+									ranks.add(rank);
+									rel.add(r.relativeConfidence());
+								}
+							}
+						}
+						ins.setInt(7, fromRec.size());
+						// avgrank
+						Double avgrank = 0.0;
+						if(!ranks.isEmpty()){
+							avgrank = ranks.stream().mapToInt(val -> val).average().getAsDouble();
+						}
+						ins.setDouble(8, avgrank);
+						Double avgrel = 0.0;
+						// avgrel
+						if(!rel.isEmpty()){
+							avgrel = rel.stream().mapToDouble(val -> val).average().getAsDouble();
+						}
+						ins.setDouble(9, avgrel);
+						
+						l.trace("_annotate measures: annotations:{}, duration:{}, fromRec:{}, avgrank:{}, avgrel:{}", new Object[] {
+								annotations.size(),
+								duration,
+								fromRec,
+								avgrank,
+								avgrel
+						});
 						ins.executeUpdate();
 					}
 					conn.commit();
@@ -194,9 +240,11 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 
 	public static final List<String> toStringList(String json) {
 		List<String> arl = new ArrayList<String>();
-		JsonArray arr = (JsonArray) new JsonParser().parse(json);
-		for (int x = 0; x < arr.size(); x++) {
-			arl.add(arr.get(x).getAsString());
+		if(json != null){
+			JsonArray arr = (JsonArray) new JsonParser().parse(json);
+			for (int x = 0; x < arr.size(); x++) {
+				arl.add(arr.get(x).getAsString());
+			}
 		}
 		return arl;
 	}
@@ -204,23 +252,52 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 	public static final String rulesToJsonString(List<Rule> list) {
 		JsonArray array = new JsonArray();
 		for (Rule l : list) {
-			JsonObject o = new JsonObject();
-			o.addProperty("support", l.support());
-			o.addProperty("confidence", l.confidence());
-			o.addProperty("relativeConfidence", l.relativeConfidence());
-			JsonArray h = new JsonArray();
-			for (Object j : l.head())
-				h.add(j.toString());
-			o.add("head", h);
-			JsonArray b = new JsonArray();
-			for (Object j : l.body())
-				b.add(j.toString());
-			o.add("body", b);
-			array.add(o);
+			array.add(ruleToJsonObject(l));
 		}
 		return new Gson().toJson(array);
 	}
+	
+	
+	public static final JsonObject ruleToJsonObject(Rule l){
+		JsonObject o = new JsonObject();
+		o.addProperty("support", l.support());
+		o.addProperty("confidence", l.confidence());
+		o.addProperty("relativeConfidence", l.relativeConfidence());
+		JsonArray h = new JsonArray();
+		for (Object j : l.head())
+			h.add(j.toString());
+		o.add("head", h);
+		JsonArray b = new JsonArray();
+		for (Object j : l.body())
+			b.add(j.toString());
+		o.add("body", b);
+		return o;
+	}
 
+	public static final List<Rule> jsonStringToRules(String json) {
+		List<Rule> rules = new ArrayList<Rule>();
+		if(json != null && json.length() > 2){ // 2 is the lenght of the empty array []
+			JsonArray array = (JsonArray) new JsonParser().parse(json);
+			for(int i = 0; i < array.size(); i ++){
+				JsonObject o = (JsonObject) array.get(i);
+				rules.add(jsonObjectToRule(o));
+			}
+		}
+		return rules;
+	}
+	
+	public static final Rule jsonObjectToRule(JsonObject json) {
+		Gson G = new Gson();
+		JsonObject o = (JsonObject) json;
+		RuleImpl r = new RuleImpl();
+		Type type = new TypeToken<String[]>() {}.getType();
+		r.head(G.fromJson(o.get("head"), type));
+		r.body(G.fromJson(o.get("body"), type));
+		r.confidence(o.get("confidence").getAsDouble());
+		r.confidence(o.get("support").getAsDouble());
+		r.confidence(o.get("relativeConfidence").getAsDouble());
+		return r;
+	}
 	@Override
 	public void walk(AnnotationsWalker walker) throws IOException {
 		try {
@@ -233,6 +310,33 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 					String portPairName = rs.getString(2);
 					String annotations = rs.getString(3);
 					goNext = walker.read(bundleId, portPairName, toStringList(annotations));
+				}
+			}
+		} catch (SQLException | IOException e) {
+			throw new IOException(e);
+		}
+	}
+
+	@Override
+	public void walk(LogWalker walker) throws IOException {
+		try {
+			try (Connection conn = getConnection()) {
+				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_ANNOTATION_LOGS);
+				ResultSet rs = st.executeQuery();
+				boolean goNext = true;
+				while (rs.next() && goNext) {
+					String bundleId = rs.getString(1);
+					String portPairName = rs.getString(2);
+					String annotations = rs.getString(3);
+					String recommended = rs.getString(4);
+					String action =  rs.getString(5);
+					int logId = rs.getInt(6);
+					int count = rs.getInt(7);
+					int duration = rs.getInt(8);
+					int fromRec = rs.getInt(9);
+					double avgrank = rs.getDouble(10);
+					double avgrel = rs.getDouble(11);
+					goNext = walker.read(bundleId, portPairName, toStringList(annotations), jsonStringToRules(recommended), H2Queries.toAnnotationAction(action.charAt(0)), logId, count, duration, fromRec, avgrank, avgrel);
 				}
 			}
 		} catch (SQLException | IOException e) {
@@ -265,7 +369,7 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_BUNDLE_ANNOTATING);
 				ResultSet rs = st.executeQuery();
 				while (rs.next()) {
-					annotating.add(rs.getString(1));
+					annotating.add(rs.getString(2));
 				}
 			}
 			return Collections.unmodifiableList(annotating);
@@ -274,6 +378,26 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 		}
 	}
 
+	@Override
+	public boolean annotated(String portPairName) throws IOException {
+		try {
+			try (Connection conn = getConnection()) {
+				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_PORTPAIR_IS_ANNOTATED);
+				st.setString(1,  portPairName);
+				ResultSet rs = st.executeQuery();
+				if (rs.next()) {
+					return true;
+				}
+			}
+			return false;
+		} catch (SQLException | IOException e) {
+			throw new IOException(e);
+		}
+	}
+
+	/**
+	 * FIXME
+	 */
 	@Override
 	public List<String> neverAnnotated() throws IOException {
 		List<String> annotating = new ArrayList<String>();
@@ -291,46 +415,53 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 		}
 	}
 
+	/**
+	 * Return all portpairs with the optional list of annotations, if any, or an
+	 * empty list.
+	 */
 	@Override
-	public Map<String, Integer> progress() throws IOException {
-		Map<String, Integer> progress = new HashMap<String, Integer>();
+	public Map<String, List<String>> bundleAnnotations(String bundleId) throws IOException {
+		Map<String, List<String>> map = new HashMap<String, List<String>>();
 		try {
 			try (Connection conn = getConnection()) {
-				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_BUNDLE_PORTPAIR_ANNOTATION_STATUS);
+
+				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_ANNOTATIONS_OF_BUNDLE);
+				st.setString(1, bundleId);
+				ResultSet rs = st.executeQuery();
+				while (rs.next()) {
+					String pp = rs.getString(1);
+					String annotations = rs.getString(2);
+					if (annotations != null) {
+						List<String> ann = toStringList(rs.getString(2));
+						if (map.containsKey(pp)) {
+							throw new IOException("Assumption not met");
+						}
+						map.put(pp, ann);
+					} else {
+						map.put(pp, Collections.emptyList());
+					}
+				}
+			}
+		} catch (SQLException | IOException e) {
+			throw new IOException(e);
+		}
+		return Collections.unmodifiableMap(map);
+	}
+
+	@Override
+	public Map<String, Integer> progress() throws IOException {
+		Map<String, Integer> progress = new LinkedHashMap<String, Integer>();
+		try {
+			try (Connection conn = getConnection()) {
+				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_BUNDLE_PORTPAIR_ANNOTATION_PROGRESS);
 				ResultSet rs = st.executeQuery();
 				while (rs.next()) {
 					String b = rs.getString(1);
-					int amount = rs.getInt(2);
-					boolean status = rs.getBoolean(3);
-					if (!progress.containsKey(b)) {
-						// First time we meet this bundle
-						if (status == false) {
-							// This item was never annotated, because the result set is
-							// ordered by bundle,status desc, so if any true was occurred
-							// it should have happened before.
-							progress.put(b, 0);
-						} else {
-							// This bundle was partly or fully annotated
-							// We remember the amount of items annotated.
-							progress.put(b, amount);
-						}
-					} else {
-						if (status == true) {
-							// If status is TRUE, there is a problem in our
-							// assumption or the
-							// Query is wrong.
-							// This should never happen, anyway
-							throw new IOException("Unexpected assumption!");
-						}
-						// If it is already there I expect that the amount
-						// previously loaded is the number of
-						// portpairs that was annotated, so I calculate
-						// the percentage
-						int annotated = progress.get(b);
-						int percentage = (int) ((annotated * 100) / (amount + annotated));
-						progress.put(b, percentage);
-						//
-					}
+					int annotated = rs.getInt(2);
+					int total = rs.getInt(3);
+					int percentage = (int) ((annotated * 100) / (total));
+					progress.put(b, percentage);
+
 				}
 			}
 			return Collections.unmodifiableMap(progress);

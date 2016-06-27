@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
@@ -39,7 +40,7 @@ public class FeaturesDatabaseH2Test {
 		l.debug("{}", name.getMethodName());
 		connectionUrl = "jdbc:h2:file:" + testFolder.newFolder().getAbsolutePath() + "/H2Test";
 		l.debug("Connection url: {}", connectionUrl);
-		
+
 		Connection conn = DriverManager.getConnection(connectionUrl, user, pwd);
 
 		conn.createStatement().execute(H2Queries.CREATE_TABLE_BUNDLE);
@@ -52,25 +53,24 @@ public class FeaturesDatabaseH2Test {
 	private String user = "user";
 	private String pwd = "pwd234556";
 
-	
 	@Test
 	public void test() throws IOException, ReaderException {
 		FeaturesDatabaseH2 h2 = new FeaturesDatabaseH2(testFolder.newFolder("test"), "H2Test", user, pwd);
 		Assert.assertTrue(h2.getFeatures().size() == 0);
-		
+
 		String bundleFile = "ADR-S-v2";
-		
+
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle bundle = io
 				.readBundle(getClass().getClassLoader().getResourceAsStream("./" + bundleFile + ".wfbundle"), null);
-		
+
 		FeaturesMap map = FeaturesMapExtractor.extract(bundleFile, bundle);
 		h2.put(bundleFile, map);
 		// Put twice, should just update
-		
+
 		FeaturesMap read = h2.getFeatures(bundleFile, bundle);
-		
-		for(Entry<FromTo,FeatureSet> entry : read.entrySet()){
+
+		for (Entry<FromTo, FeatureSet> entry : read.entrySet()) {
 			FromTo port = entry.getKey();
 			Assert.assertTrue(map.containsKey(port));
 			FeatureSet fs1 = map.get(port);
@@ -79,18 +79,18 @@ public class FeaturesDatabaseH2Test {
 			Assert.assertTrue(fs1.containsAll(fs2));
 		}
 	}
-	
+
 	@Test
-	public void update() throws ReaderException, IOException{
+	public void update() throws ReaderException, IOException {
 		FeaturesDatabaseH2 h2 = new FeaturesDatabaseH2(testFolder.newFolder("test"), "H2Test", user, pwd);
 		Assert.assertTrue(h2.getFeatures().size() == 0);
-		
+
 		String bundleFile = "ADR-S-v2";
-		
+
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle bundle = io
 				.readBundle(getClass().getClassLoader().getResourceAsStream("./" + bundleFile + ".wfbundle"), null);
-		
+
 		FeaturesMap map = FeaturesMapExtractor.extract(bundleFile, bundle);
 		h2.put(bundleFile, map);
 		Exception e = null;
@@ -99,7 +99,28 @@ public class FeaturesDatabaseH2Test {
 		} catch (Exception e2) {
 			e = e2;
 		}
-		
+
 		Assert.assertNull("A new put should override the data and not raise any exception", e);
+	}
+
+	@Test
+	public void getFeatures() throws IOException, ReaderException {
+		FeaturesDatabaseH2 h2 = new FeaturesDatabaseH2(testFolder.newFolder("test"), "H2Test", user, pwd);
+
+		String bundleFile = "Get_similar_phenotypes_for_a_disease_and_a_gene-v1";
+
+		WorkflowBundleIO io = new WorkflowBundleIO();
+		WorkflowBundle bundle = io
+				.readBundle(getClass().getClassLoader().getResourceAsStream("./" + bundleFile + ".wfbundle"), null);
+
+		FeaturesMap map = FeaturesMapExtractor.extract(bundleFile, bundle);
+		h2.put(bundleFile, map);
+		
+		
+		Map<String,FeatureSet> fff = h2.getFeatures(bundleFile);
+		for(Entry<FromTo,FeatureSet> e : map.entrySet()){
+			Assert.assertTrue(fff.containsKey(e.getKey().getId()));
+			Assert.assertTrue(e.getValue().equals(fff.get(e.getKey().getId())));
+		}
 	}
 }
