@@ -16,7 +16,7 @@ import dinowolf.annotation.FromToCollector;
 
 public class FeaturesExtractorTest {
 	private static final Logger l = LoggerFactory.getLogger(FeaturesExtractorTest.class);
-	private static final FeaturesExtractor E = new FeaturesExtractor();
+	private static final FeaturesExtractor E = new StandardFeaturesExtractor();
 
 	private InputStream __f(String n) {
 		return getClass().getClassLoader().getResourceAsStream(n);

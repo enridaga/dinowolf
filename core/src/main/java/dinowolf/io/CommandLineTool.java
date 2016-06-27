@@ -114,7 +114,7 @@ public class CommandLineTool {
 	// throw new FileNotFoundException(input);
 	//
 	// WorkflowBundle wb = io.readBundle(f, null);
-	// FeaturesExtractor ex = new FeaturesExtractor(wb);
+	// StandardFeaturesExtractor ex = new StandardFeaturesExtractor(wb);
 	// Set<FromTo> inout = ex.getSet();
 	// P.println("Processors");
 	// for (FromTo x : inout) {

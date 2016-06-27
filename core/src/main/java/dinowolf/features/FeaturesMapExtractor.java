@@ -9,10 +9,10 @@ import org.slf4j.LoggerFactory;
 import dinowolf.annotation.FromTo;
 import dinowolf.annotation.FromToCollector;
 
-public class FeaturesMapExtractor {
+public class FeaturesMapExtractor  {
 	private static final Logger l = LoggerFactory.getLogger(FeaturesMapExtractor.class);
 
-	private static final FeaturesExtractor E = new FeaturesExtractor();
+	private static final FeaturesExtractor[] E = new FeaturesExtractor[]{new StandardFeaturesExtractor()};
 	private static final FromToCollector C = new FromToCollector();
 
 	public final static BundleFeaturesMap generate(String bundleId, WorkflowBundle bundle, FromTo.FromToType... types) {
@@ -27,9 +27,16 @@ public class FeaturesMapExtractor {
 					continue;
 				}
 			}
-			FeatureHashSet fff = E.extract(io);
-			featuresMap.put(io, fff);
-			l.trace("{}: {} features extracted", io.getId(), fff.size());
+			for(FeaturesExtractor f : E){
+				FeatureHashSet fff = f.extract(io);
+				l.trace("{}: {} features extracted", io.getId(), fff.size());
+				if(!featuresMap.containsKey(io)){
+					featuresMap.put(io, fff);
+				}else{
+					featuresMap.get(io).addAll(fff);
+				}
+			}
+			
 		}
 
 		return featuresMap;
