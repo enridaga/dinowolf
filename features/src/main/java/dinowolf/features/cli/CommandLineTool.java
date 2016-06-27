@@ -1,4 +1,4 @@
-package dinowolf.io;
+package dinowolf.features.cli;
 
 import java.io.File;
 import java.io.FileNotFoundException;

@@ -21,10 +21,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import dinowolf.annotation.FromTo;
-import dinowolf.features.Feature;
-import dinowolf.features.FeaturesMap;
-import dinowolf.features.FeaturesMapExtractor;
 import dinowolf.io.AnnotationHelper;
 import gonzales.xml.Gonzo;
 
@@ -116,8 +112,7 @@ public class Taverna2InspectionTest {
 	public void scufl2_t2flow() throws ReaderException, IOException {
 		WorkflowBundleIO io = new WorkflowBundleIO();
 		WorkflowBundle wb = io.readBundle(__f("Get_similar_phenotypes_for_a_disease_and_a_gene-v1.wfbundle"), null);
-		FeaturesMap ex = FeaturesMapExtractor.generate("Get_similar_phenotypes_for_a_disease_and_a_gene-v1", wb);
-
+		
 		System.out.println("Profiles count: " + wb.getProfiles().size());
 		Profile p = wb.getMainProfile();
 
@@ -131,13 +126,6 @@ public class Taverna2InspectionTest {
 			System.out.println(c);
 			System.out.println(c.getConfigures());
 			// System.out.println(c.getJson());
-		}
-		for (FromTo i : ex.getPortPairs()) {
-			System.out.println(i);
-			for (Feature f : ex.getFeatures(i)) {
-				System.out.print(' ');
-				System.out.println(f);
-			}
 		}
 	}
 
