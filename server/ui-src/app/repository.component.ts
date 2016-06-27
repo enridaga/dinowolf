@@ -8,7 +8,7 @@ import {Router} from 'angular2/router';
   <table class="table">
     <tr *ngFor="#bundle of bundles">
       <td><a (click)="onSelect(bundle)">
-      {{bundle.name | slice:1:60}}</a></td>
+      {{bundle.name | slice:0:60}}</a></td>
         <td>
         <div class="progress">
           <div class="progress-bar" role="progressbar" aria-valuenow="bundle.progress" aria-valuemin="0" aria-valuemax="100" style="width: {{bundle.progress}}%;">

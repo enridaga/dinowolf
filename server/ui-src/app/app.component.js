@@ -1,4 +1,4 @@
-System.register(['angular2/core', 'angular2/router', './repository.component', './workflow-details.component', './feature-details.component', './home.component'], function(exports_1, context_1) {
+System.register(['angular2/core', 'angular2/router', './repository.component', './workflow-details.component', './annotate.component', './logs.component', './annotations.component', './feature-details.component', './home.component'], function(exports_1, context_1) {
     "use strict";
     var __moduleName = context_1 && context_1.id;
     var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
@@ -10,7 +10,7 @@ System.register(['angular2/core', 'angular2/router', './repository.component', '
     var __metadata = (this && this.__metadata) || function (k, v) {
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
-    var core_1, router_1, repository_component_1, workflow_details_component_1, feature_details_component_1, home_component_1;
+    var core_1, router_1, repository_component_1, workflow_details_component_1, annotate_component_1, logs_component_1, annotations_component_1, feature_details_component_1, home_component_1;
     var AppComponent;
     return {
         setters:[
@@ -25,6 +25,15 @@ System.register(['angular2/core', 'angular2/router', './repository.component', '
             },
             function (workflow_details_component_1_1) {
                 workflow_details_component_1 = workflow_details_component_1_1;
+            },
+            function (annotate_component_1_1) {
+                annotate_component_1 = annotate_component_1_1;
+            },
+            function (logs_component_1_1) {
+                logs_component_1 = logs_component_1_1;
+            },
+            function (annotations_component_1_1) {
+                annotations_component_1 = annotations_component_1_1;
             },
             function (feature_details_component_1_1) {
                 feature_details_component_1 = feature_details_component_1_1;
@@ -48,8 +57,11 @@ System.register(['angular2/core', 'angular2/router', './repository.component', '
                         { path: '/home', component: home_component_1.Home, name: 'Home', useAsDefault: true },
                         { path: '/repository', name: 'Repository', component: repository_component_1.RepositoryComponent },
                         { path: '/workflow/:name', name: 'Workflow', component: workflow_details_component_1.WorkflowDetailsComponent },
+                        { path: '/annotation/:portpair', name: 'Annotation', component: annotate_component_1.AnnotateComponent },
+                        { path: '/annotations', name: 'Annotations', component: annotations_component_1.AnnotationsComponent },
+                        { path: '/logs', name: 'Logs', component: logs_component_1.LogsComponent },
                         { path: '/feature/:id', name: 'Feature', component: feature_details_component_1.FeatureDetailsComponent },
-                        { path: '/**', redirectTo: ['Home'] }
+                        { path: '/**', redirectTo: ['Repository'] }
                     ]), 
                     __metadata('design:paramtypes', [])
                 ], AppComponent);

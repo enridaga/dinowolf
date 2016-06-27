@@ -28,12 +28,18 @@ System.register(['angular2/core', 'angular2/router', './workflow-details.service
             }],
         execute: function() {
             WorkflowDetailsComponent = (function () {
+                //@ViewChild(AnnotateDialog) annotationDialog: AnnotateDialog;
                 function WorkflowDetailsComponent(http, _params, injector, _router, _service) {
                     this.http = http;
                     this._params = _params;
                     this._router = _router;
                     this._service = _service;
+                    this.selectedValue = '';
                 }
+                WorkflowDetailsComponent.prototype.annotate = function (pair) {
+                    //  this.annotationDialog.showDialog(pair);
+                    this._router.navigate(['Annotation', { portpair: pair.getId() }]);
+                };
                 WorkflowDetailsComponent.prototype.ngOnInit = function () {
                     var _this = this;
                     this.name = this._params.get('name');
@@ -42,11 +48,15 @@ System.register(['angular2/core', 'angular2/router', './workflow-details.service
                     this._service.getWorkflow(this.name).subscribe(function (workflow) { return _this.workflow = workflow; }, function (error) { return _this.errorMessage = error; });
                     // features
                     this._service.getFeatures(this.name).subscribe(function (features) { return _this.features = features; }, function (error) { return _this.errorMessage = error; });
+                    this._service.getAnnotations(this.name).subscribe(function (annotations) { return _this.annotations = annotations; }, function (error) { return _this.errorMessage = error; });
+                };
+                WorkflowDetailsComponent.prototype.ngAfterViewInit = function () {
                 };
                 WorkflowDetailsComponent = __decorate([
                     core_1.Component({
-                        template: "\n<h1 *ngIf=\"name\">{{name}}</h1>\n<a href=\"{{link}}\" target=\"_myexperiments\">{{link}}</a>\n<div *ngIf=\"workflow\">\n    <strong>Workflow:</strong> \n    <span *ngIf=\"workflow.title\">{{workflow.title}}</span>\n    <span *ngIf=\"!workflow.title\">{{workflow.name}}</span>\n</div>\n<div *ngIf=\"errorMessage\" class=\"alert alert-danger\" role=\"alert\"><i class=\"fa fa-exclamation-triangle\"></i> Error: {{errorMessage}}</div>\n<div *ngIf=\"features\">\n    <p><strong>I/O port pairs:</strong></p>\n    <ul>\n    <li *ngFor=\"#pair of features.getPortpairs()\">{{pair}}</li>\n    </ul>\n    <div *ngFor=\"#pair of features.getPortpairs()\">\n        <h4>{{pair}}</h4>\n        <table class=\"table\" >\n            <tr *ngFor=\"#feature of features.getFeatures(pair)\">\n                <td>{{feature.l}}</td>                \n                <td>{{feature.n}}</td>\n                <td style=\"word-break: break-all;\">{{feature.v}}</td>\n                <td>{{feature.t}}</td>\n            </tr>\n        </table>\n    </div>\n</div>\n",
-                        providers: [workflow_details_service_1.WorkflowDetailsService]
+                        template: "\n<h1 *ngIf=\"name\">{{name}}</h1>\n<a href=\"{{link}}\" target=\"_myexperiments\">{{link}}</a>\n<div *ngIf=\"workflow\">\n    <strong>Workflow:</strong>\n    <span *ngIf=\"workflow.title\">{{workflow.title}}</span>\n    <span *ngIf=\"!workflow.title\">{{workflow.name}}</span>\n</div>\n<div *ngIf=\"errorMessage\" class=\"alert alert-danger\" role=\"alert\"><i class=\"fa fa-exclamation-triangle\"></i> Error: {{errorMessage}}</div>\n<div *ngIf=\"annotations\">\n    <img src=\"/service/myexperiments/image/{{name}}\" >\n    <p><strong>I/O port pairs:</strong></p>\n    <table class=\"table\">\n    <thead>\n      <tr>\n        <th>Workflow</th>\n        <th>Processor</th>\n        <th>Port mapping</th>\n        <th>Annotations</th>\n      </tr>\n    </thead>\n    <tbody>\n    <tr *ngFor=\"#pair of annotations.getPortpairs()\">\n      <td>{{pair.getWorkflow()}}</td>\n      <td>{{pair.getProcessor()}}</td>\n      <td>{{pair.getFrom()}} <span [innerHTML]=\"pair.getArrow()\"></span> {{pair.getTo()}}</td>\n      <td>\n        <button *ngIf=\"!annotations.annotated(pair)\"\n        class=\"btn btn-default btn-sm\" (click)=\"annotate(pair)\">Annotate</button>\n        <div *ngIf=\"annotations.getAnnotations(pair).length > 0\">\n            <span *ngFor=\"#ann of annotations.getAnnotations(pair)\">\n            <span class=\"\" >{{ann}}</span>\n            &nbsp;\n            </span>\n        </div>\n      </td>\n    </tr>\n    </tbody>\n    </table>\n\n</div>\n",
+                        providers: [workflow_details_service_1.WorkflowDetailsService],
+                        directives: []
                     }), 
                     __metadata('design:paramtypes', [http_1.Http, router_1.RouteParams, core_1.Injector, router_1.Router, workflow_details_service_1.WorkflowDetailsService])
                 ], WorkflowDetailsComponent);

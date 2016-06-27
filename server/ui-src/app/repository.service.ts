@@ -23,17 +23,18 @@ export class RepositoryService {
         let result: Array<Bundle> = [];
         if (body) {
             body.forEach((obj) => {
-                
                 result.push(
                     new Bundle(obj.bundle, obj.bundle, obj.progress));
             });
         }
         return result || new Array<Bundle>();
     }
+
     private handleError(error: any) {
         let errMsg = error.message || 'Server error';
         return Observable.throw(errMsg);
     }
+    
     constructor(public http: Http) {
         //console.log('Task Service created.', http);
     }

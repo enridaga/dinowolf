@@ -11,7 +11,7 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
         if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
     };
     var core_1, Rx_1, app_models_1, http_1;
-    var WorkflowDetailsService;
+    var DatanodeService;
     return {
         setters:[
             function (core_1_1) {
@@ -27,94 +27,75 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
                 http_1 = http_1_1;
             }],
         execute: function() {
-            WorkflowDetailsService = (function () {
-                function WorkflowDetailsService(http) {
+            DatanodeService = (function () {
+                function DatanodeService(http) {
                     this.http = http;
                 }
-                WorkflowDetailsService.prototype.getWorkflow = function (name) {
+                DatanodeService.prototype.list = function () {
                     var theHeaders = new http_1.Headers();
                     theHeaders.append("Accept", "application/json");
                     var options = new http_1.RequestOptions({ headers: theHeaders });
-                    var observable = this.http.get('/service/workflow/' + name, options);
+                    var observable = this.http.get('/service/datanode/list', options);
                     var o = observable
-                        .map(this.extractWorkflowData);
+                        .map(this.extractData);
                     return o
                         .catch(this.handleError);
                 };
-                WorkflowDetailsService.prototype.getFeatures = function (name, portpair) {
-                    if (portpair === void 0) { portpair = undefined; }
+                DatanodeService.prototype.tree = function () {
                     var theHeaders = new http_1.Headers();
                     theHeaders.append("Accept", "application/json");
                     var options = new http_1.RequestOptions({ headers: theHeaders });
-                    var url = '/service/workflow/' + name + "/features";
-                    if (portpair) {
-                        url += '/' + portpair;
-                    }
-                    console.log('get features: ', url);
-                    var observable = this.http.get(url, options);
+                    var observable = this.http.get('/service/datanode/tree', options);
                     var o = observable
-                        .map(this.extractFeaturesData);
+                        .map(this.extractData);
                     return o
                         .catch(this.handleError);
                 };
-                WorkflowDetailsService.prototype.getAnnotations = function (bundle) {
+                DatanodeService.prototype.datanode = function () {
                     var theHeaders = new http_1.Headers();
                     theHeaders.append("Accept", "application/json");
                     var options = new http_1.RequestOptions({ headers: theHeaders });
-                    var observable = this.http.get('/service/annotations/bundle/' + bundle, options);
+                    var observable = this.http.get('/service/datanode/tree', options);
                     var o = observable
-                        .map(this.extractAnnotationsData);
+                        .map(this.extractDatanode);
                     return o
                         .catch(this.handleError);
                 };
-                WorkflowDetailsService.prototype.handleError = function (error) {
-                    // console.log("Error", error);
+                DatanodeService.prototype.handleError = function (error) {
+                    console.log("Error", error);
                     var errMsg = error.message || 'Server error';
                     return Rx_1.Observable.throw(errMsg);
                 };
-                WorkflowDetailsService.prototype.extractAnnotationsData = function (res) {
+                DatanodeService.prototype.extractData = function (res) {
                     if (res.status < 200 || res.status >= 300) {
                         throw new Error('Bad response status: ' + res.status);
                     }
                     var body = res.json();
-                    var annotations;
+                    var o;
                     if (body) {
-                        annotations = new app_models_1.Annotations(body);
+                        o = body;
                     }
-                    return annotations;
+                    return o;
                 };
-                WorkflowDetailsService.prototype.extractWorkflowData = function (res) {
+                DatanodeService.prototype.extractDatanode = function (res) {
                     if (res.status < 200 || res.status >= 300) {
                         throw new Error('Bad response status: ' + res.status);
                     }
                     var body = res.json();
-                    var workflow;
+                    var o;
                     if (body) {
-                        workflow = new app_models_1.Workflow(body.name, body.title, body.description, body.creator);
+                        o = new app_models_1.Datanode(body);
                     }
-                    return workflow;
+                    return o;
                 };
-                WorkflowDetailsService.prototype.extractFeaturesData = function (res) {
-                    if (res.status < 200 || res.status >= 300) {
-                        throw new Error('Bad response status: ' + res.status);
-                    }
-                    var body = res.json();
-                    var features;
-                    if (body) {
-                        features = new app_models_1.Features(body);
-                    }
-                    //        console.log("body",body);
-                    //        console.log("WF",features);
-                    return features;
-                };
-                WorkflowDetailsService = __decorate([
+                DatanodeService = __decorate([
                     core_1.Injectable(), 
                     __metadata('design:paramtypes', [http_1.Http])
-                ], WorkflowDetailsService);
-                return WorkflowDetailsService;
+                ], DatanodeService);
+                return DatanodeService;
             }());
-            exports_1("WorkflowDetailsService", WorkflowDetailsService);
+            exports_1("DatanodeService", DatanodeService);
         }
     }
 });
-//# sourceMappingURL=workflow-details.service.js.map
+//# sourceMappingURL=datanode.service.js.map
