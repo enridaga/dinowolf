@@ -5,6 +5,6 @@
 **/.settings/
 /myexperiment/
 **/.DS_Store
-**/dinowolf-repository/
+**/dinowolf-repository*
 **/dependency-reduced-pom.xml
 **/node_modules/
