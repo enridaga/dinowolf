@@ -23,10 +23,7 @@ public class Cli {
 	public Cli(String[] args) {
 		this.args = args;
 		options.addOption("h", "help", false, "Show this help.");
-		//options.addOption("p", "port", true, "Set the port the server will listen to (defaults to 8080).");
-		//options.addOption("l", "load", true, "Load .wfbundle files from this directory.");
 		options.addOption("r", "repository", true, "Repository directory (default is ./dinowolf-repository).");
-		//options.addOption("b", "build", false, "(re)build the features database.");
 	}
 
 	private void help() {
