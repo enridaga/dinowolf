@@ -3,18 +3,16 @@ package dinowolf.features;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,10 +22,12 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import dinowolf.annotation.FromTo;
+import dinowolf.features.cache.HttpCallCaching;
 
 public class DbPediaEntitiesExtractor implements FeaturesExtractor {
-
+	private static HttpCallCaching caching = null;
 	private static final String SPOTLIGHT_SERVICE_SYSTEM_PROPERTY = "dinowolf.spotlight";
+	private static final String HTTP_CACHEDIR_SYSTEM_PROPERTY = "dinowolf.httpcache";
 	private static final String DBPEDIA_ENDPOINT_SYSTEM_PROPERTY = "dinowolf.dbpedia";
 	private static final Logger l = LoggerFactory.getLogger(DbPediaEntitiesExtractor.class);
 	private String spotlightServiceUrl = null;
@@ -45,6 +45,24 @@ public class DbPediaEntitiesExtractor implements FeaturesExtractor {
 			l.debug("DbPedia url missing. Using public endpoint.");
 			dbpediaEndpointUrl = "http://dbpedia.org/sparql";
 		}
+	}
+	
+	private static HttpCallCaching getHttpCaching() throws IOException{
+		if(caching == null){
+			String dir = System.getProperty(HTTP_CACHEDIR_SYSTEM_PROPERTY);
+			if(dir != null){
+				try {
+					caching = new HttpCallCaching(dir);
+				} catch (IOException e) {
+					l.error("Cannot use dir: " + dir);
+					l.warn("Using default contructor");
+					caching = new HttpCallCaching();
+				}
+			}else{
+				caching = new HttpCallCaching();
+			}
+		}
+		return caching;
 	}
 
 	public DbPediaEntitiesExtractor(String serviceUrl) {
@@ -105,21 +123,21 @@ public class DbPediaEntitiesExtractor implements FeaturesExtractor {
 		String qs = URLEncoder.encode(input, "UTF-8");
 		String url = new StringBuilder().append(spotlightServiceUrl).append("?text=").append(qs).append("&confidence=")
 				.append("0.3").toString();
-		HttpURLConnection hc = (HttpURLConnection) new URL(url).openConnection();
-		hc.setDoOutput(true);
-		hc.setRequestProperty("Accept", "application/json");
-		int status = hc.getResponseCode();
+		InputStream is;
+		try {
+			is = getHttpCaching().get(url, "application/json");
+		} catch (Exception e) {
+			l.error("Cannot extract entities", e);
+			return Collections.emptyList();
+		}	
 		List<String> uris = new ArrayList<String>();
-		if (status == 200) {
-			InputStream is = hc.getInputStream();
-			JsonObject o = (JsonObject) new JsonParser().parse(new InputStreamReader(is));
-			JsonArray a = o.getAsJsonArray("Resources");
-			if (a != null) {
-				Iterator<JsonElement> it = a.iterator();
-				while (it.hasNext()) {
-					JsonObject k = (JsonObject) it.next();
-					uris.add(k.get("@URI").getAsString());
-				}
+		JsonObject o = (JsonObject) new JsonParser().parse(new InputStreamReader(is));
+		JsonArray a = o.getAsJsonArray("Resources");
+		if (a != null) {
+			Iterator<JsonElement> it = a.iterator();
+			while (it.hasNext()) {
+				JsonObject k = (JsonObject) it.next();
+				uris.add(k.get("@URI").getAsString());
 			}
 		}
 		return uris;
@@ -133,25 +151,19 @@ public class DbPediaEntitiesExtractor implements FeaturesExtractor {
 						.append("> rdf:type* ?Concept . bind (\"T\" as ?Type) }\n" + "}").toString();
 		String qs = URLEncoder.encode(q, "UTF-8");
 		String url = new StringBuilder().append(dbpediaEndpointUrl).append("?query=").append(qs).append("&format=json").toString();
-		HttpURLConnection hc = (HttpURLConnection) new URL(url).openConnection();
-		hc.setDoOutput(true);
-		hc.setRequestProperty("Accept", "application/sparql-results+json");
-		int status = hc.getResponseCode();
+		InputStream is = getHttpCaching().get(url,"application/sparql-results+json");
+
 		Map<String,String> uris = new HashMap<String,String>();
-		//l.debug("DBPedia response: {}", status);
-		if (status == 200) {
-			InputStream is = hc.getInputStream();
-			JsonObject o = (JsonObject) new JsonParser().parse(new InputStreamReader(is));
-			JsonArray a = o.getAsJsonObject("results").getAsJsonArray("bindings");
-			
-			if (a != null) {
-				Iterator<JsonElement> it = a.iterator();
-				while (it.hasNext()) {
-					JsonObject k = (JsonObject) it.next();
-					JsonObject cc = (JsonObject) k.get("Concept");
-					JsonObject vv = (JsonObject) k.get("Type");
-					uris.put(cc.get("value").getAsString(),vv.get("value").getAsString());
-				}
+		JsonObject o = (JsonObject) new JsonParser().parse(new InputStreamReader(is));
+		JsonArray a = o.getAsJsonObject("results").getAsJsonArray("bindings");
+		
+		if (a != null) {
+			Iterator<JsonElement> it = a.iterator();
+			while (it.hasNext()) {
+				JsonObject k = (JsonObject) it.next();
+				JsonObject cc = (JsonObject) k.get("Concept");
+				JsonObject vv = (JsonObject) k.get("Type");
+				uris.put(cc.get("value").getAsString(),vv.get("value").getAsString());
 			}
 		}
 		return uris;
