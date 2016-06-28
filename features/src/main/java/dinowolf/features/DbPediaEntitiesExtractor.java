@@ -88,12 +88,17 @@ public class DbPediaEntitiesExtractor implements FeaturesExtractor {
 		StringBuilder sb = new StringBuilder();
 		for (Feature f : features) {
 			if (f.isTokenizable() && (f.getName().contains("Title") || f.getName().contains("Description"))) {
-				sb.append(f.getValue()).append(" ");
+				if(!f.getValue().isEmpty()){
+					sb.append(f.getValue()).append(" ");
+				}
 			}
 		}
 		String input = sb.toString();
-
+		
 		FeatureHashSet set = new FeatureHashSet();
+		if(input.isEmpty()){
+			return set;
+		}
 		List<String> entities = spotlight(input);
 		for (String u : entities) {
 			set.add(new FeatureImpl("DbPediaEntity", u, FeatureDepth.FromToPorts));
@@ -128,6 +133,7 @@ public class DbPediaEntitiesExtractor implements FeaturesExtractor {
 			is = getHttpCaching().get(url, "application/json");
 		} catch (Exception e) {
 			l.error("Cannot extract entities", e);
+			l.error("URL was: {}", url);
 			return Collections.emptyList();
 		}	
 		List<String> uris = new ArrayList<String>();

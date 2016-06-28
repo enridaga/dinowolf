@@ -99,12 +99,11 @@ public class Application extends ResourceConfig implements ServletContextListene
 			int c = 0;
 			Map<String, Exception> errors = new HashMap<String, Exception>();
 			for (String bundleId : manager.list()) {
-				log.trace("Loading bundle {}", bundleId);
 				c++;
 				try {
 					WorkflowBundle wb = manager.get(bundleId);
 					FeaturesMap map = FeaturesMapExtractor.extract(bundleId, wb, FromToType.IO);
-					log.debug("{}/{} {} [{}]", new Object[] { c, nb, bundleId, map.size() });
+					log.debug("Rebuild {}/{} {} [{}]", new Object[] { c, nb, bundleId, map.size() });
 					manager.put(bundleId, map);
 				} catch (Exception e) {
 					log.warn("Skipping {} (error occurred)", bundleId);
