@@ -202,7 +202,7 @@
 				</includes>
 			</resource>
 			<resource>
-				<targetPath>static/ui</targetPath>
+				<targetPath>static</targetPath>
 				<directory>ui-src</directory>
 				<includes>
 					<include>**/*.js</include>
