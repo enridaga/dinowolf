@@ -1,8 +1,12 @@
 package dinowolf.server.cli;
 
+import org.eclipse.jetty.rewrite.handler.RewriteHandler;
+import org.eclipse.jetty.rewrite.handler.RewriteRegexRule;
 import org.eclipse.jetty.server.Connector;
+import org.eclipse.jetty.server.Handler;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.ServerConnector;
+import org.eclipse.jetty.server.handler.HandlerCollection;
 import org.eclipse.jetty.webapp.WebAppContext;
 
 import dinowolf.server.application.Application;
@@ -38,7 +42,20 @@ public class Main {
 				.getResource("/static").toString();
 		root.setResourceBase(resLocation);
 		root.setParentLoaderPriority(true);
-		server.setHandler(root);
+		// Rewriter
+		RewriteHandler rewrite = new RewriteHandler();
+		rewrite.setRewriteRequestURI(true);
+		rewrite.setRewritePathInfo(false);
+		rewrite.setOriginalPathAttribute("requestedPath");
+		RewriteRegexRule redirect = new RewriteRegexRule();
+		redirect.setRegex("/(home|repository|workflow|annotation|annotations|logs|features).*");
+		redirect.setReplacement("/index.html");
+		redirect.setTerminating(true);
+		rewrite.addRule(redirect);
+		rewrite.setHandler(root);
+		HandlerCollection _handlerCollection = new HandlerCollection();
+		_handlerCollection.setHandlers(new Handler[] {rewrite});
+		server.setHandler(_handlerCollection);
 		System.out.println("#3: resources setup complete");
 
 		try {
