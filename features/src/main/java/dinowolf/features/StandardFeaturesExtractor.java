@@ -145,4 +145,9 @@ class StandardFeaturesExtractor implements FeaturesExtractor {
 		}
 		return features;
 	}
+
+	@Override
+	public FeatureHashSet extract(FromTo inOut, FeatureSet features) {
+		return extract(inOut);
+	}
 }
