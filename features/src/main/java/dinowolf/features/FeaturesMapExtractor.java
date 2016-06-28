@@ -14,7 +14,7 @@ public class FeaturesMapExtractor  {
 	private static final Logger l = LoggerFactory.getLogger(FeaturesMapExtractor.class);
 
 	// XXX order is important
-	private static final FeaturesExtractor[] E = new FeaturesExtractor[]{new StandardFeaturesExtractor(), new BagOfWordsExtractor()};
+	private static final FeaturesExtractor[] E = new FeaturesExtractor[]{new StandardFeaturesExtractor(), new BagOfWordsExtractor(), new DbPediaEntitiesExtractor()};
 	private static final FromToCollector C = new FromToCollector();
 
 	public final static BundleFeaturesMap generate(String bundleId, WorkflowBundle bundle, FromTo.FromToType... types) throws IOException {

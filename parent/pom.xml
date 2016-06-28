@@ -19,7 +19,7 @@
 		<log4j.version>2.1</log4j.version>
 		<org.eclipse.jetty.version>9.3.0.v20150612</org.eclipse.jetty.version>
 		<org.apache.jena.version>3.0.0</org.apache.jena.version>
-		<org.apache.taverna.version>0.15.2-incubating-SNAPSHOT</org.apache.taverna.version>
+		<org.apache.taverna.version>0.15.1-incubating</org.apache.taverna.version>
 	</properties>
 	<dependencyManagement>
 		<dependencies>
@@ -264,6 +264,21 @@
 				<groupId>datanode</groupId>
 				<artifactId>dsl</artifactId>
 				<version>1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.lucene</groupId>
+				<artifactId>lucene-analyzers-common</artifactId>
+				<version>6.1.0</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-jcs-core</artifactId>
+				<version>2.0-beta-1</version>
+			</dependency>
+			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-collections4</artifactId>
+				<version>4.1</version>
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
