@@ -32,7 +32,7 @@ export class AnnotateService {
     return o
         .catch(this.handleError);
   }
-  
+
   public skipAnnotations(portPair:Portpair, selected:Array<String>, elapsedTime: Number){
     let theHeaders = new Headers();
     theHeaders.append("Content-Type", "application/x-www-form-urlencoded");
@@ -76,13 +76,44 @@ export class AnnotateService {
       return recommendations;
   }
 
-  private receiveSaveSuccess (res: Response) {
-      if (res.status < 200 || res.status >= 300) {
-          throw new Error('Save failed: ' + res.status);
+  public about( rule : Rule){
+    let theHeaders = new Headers();
+    theHeaders.append("Accept", "application/json");
+    let options = new RequestOptions({ headers: theHeaders });
+    let ids = "";
+    for(let z in rule.body){
+      let f = rule.body[z];
+      if(ids){
+        ids += ',' + f.substr(2);
+      }else{
+        ids = f.substr(2);
       }
-
-      return true;
+    }
+    let observable = this.http.get('/service/features/' + ids, options);
+    let o = observable
+        .map(this.extractFeaturesData);
+    return o
+        .catch(this.handleError);
   }
+
+    private receiveSaveSuccess (res: Response) {
+        if (res.status < 200 || res.status >= 300) {
+            throw new Error('Save failed: ' + res.status);
+        }
+
+        return true;
+    }
+
+    private extractFeaturesData (res: Response) {
+      if (res.status < 200 || res.status >= 300) {
+          throw new Error('Bad response status: ' + res.status);
+      }
+      let body = res.json();
+      if (body) {
+        return body;
+      }
+      return false;
+    }
 
   private handleError(error: any) {
       let errMsg = error.message || 'Server error';

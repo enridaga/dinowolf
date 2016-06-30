@@ -88,11 +88,41 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
                     }
                     return recommendations;
                 };
+                AnnotateService.prototype.about = function (rule) {
+                    var theHeaders = new http_1.Headers();
+                    theHeaders.append("Accept", "application/json");
+                    var options = new http_1.RequestOptions({ headers: theHeaders });
+                    var ids = "";
+                    for (var z in rule.body) {
+                        var f = rule.body[z];
+                        if (ids) {
+                            ids += ',' + f.substr(2);
+                        }
+                        else {
+                            ids = f.substr(2);
+                        }
+                    }
+                    var observable = this.http.get('/service/features/' + ids, options);
+                    var o = observable
+                        .map(this.extractFeaturesData);
+                    return o
+                        .catch(this.handleError);
+                };
                 AnnotateService.prototype.receiveSaveSuccess = function (res) {
                     if (res.status < 200 || res.status >= 300) {
                         throw new Error('Save failed: ' + res.status);
                     }
                     return true;
+                };
+                AnnotateService.prototype.extractFeaturesData = function (res) {
+                    if (res.status < 200 || res.status >= 300) {
+                        throw new Error('Bad response status: ' + res.status);
+                    }
+                    var body = res.json();
+                    if (body) {
+                        return body;
+                    }
+                    return false;
                 };
                 AnnotateService.prototype.handleError = function (error) {
                     var errMsg = error.message || 'Server error';

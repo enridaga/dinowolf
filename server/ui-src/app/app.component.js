@@ -49,7 +49,7 @@ System.register(['angular2/core', 'angular2/router', './repository.component', '
                 AppComponent = __decorate([
                     core_1.Component({
                         selector: 'app-root',
-                        templateUrl: 'tmpl/layout.html',
+                        templateUrl: 'tmpl/layout2.html',
                         directives: [router_1.ROUTER_DIRECTIVES],
                         providers: [router_1.ROUTER_PROVIDERS]
                     }),

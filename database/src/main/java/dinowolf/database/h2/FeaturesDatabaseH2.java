@@ -100,7 +100,7 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 				if (!map.containsKey(key)) {
 					map.put(key, new FeatureHashSet());
 				}
-				map.get(key).add(new FeatureH2(rs.getInt(7),rs.getString(3), rs.getString(4),
+				map.get(key).add(new FeatureH2(rs.getInt(7), rs.getString(3), rs.getString(4),
 						H2Queries.toFeatureLevel(rs.getInt(5)), rs.getBoolean(6)));
 			}
 			return map;
@@ -189,7 +189,7 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 				stm.setString(1, bundle);
 				stm.execute();
 				ResultSet generated = stm.getGeneratedKeys();
-				if(!generated.next()){
+				if (!generated.next()) {
 					throw new IOException("Generated key is missing");
 				}
 				bundleDbId = generated.getInt(1); // FIXME
@@ -216,10 +216,10 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 			throw new IOException(e);
 		}
 	}
-	
+
 	public int getBundleIdByName(String name) throws IOException {
-		try (Connection conn = getConnection()){
-				return getBundleIdByName(name, conn);
+		try (Connection conn = getConnection()) {
+			return getBundleIdByName(name, conn);
 		} catch (SQLException e) {
 			l.error("SQL Exception", e.getMessage());
 			throw new IOException(e);
@@ -237,8 +237,8 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 			ResultSet rs = st.executeQuery();
 			FeatureSet set = new FeatureHashSet();
 			while (rs.next()) {
-				set.add(new FeatureH2(rs.getInt(7), rs.getString(3), rs.getString(4), H2Queries.toFeatureLevel(rs.getInt(5)),
-						rs.getBoolean(6)));
+				set.add(new FeatureH2(rs.getInt(7), rs.getString(3), rs.getString(4),
+						H2Queries.toFeatureLevel(rs.getInt(5)), rs.getBoolean(6)));
 			}
 			l.trace("features: {}", set);
 			return set;
@@ -247,10 +247,32 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 			throw new IOException(e);
 		}
 	}
-	
+
+	@Override
+	public FeatureSet getFeatures(Integer[] dbIds) throws IOException {
+		try (Connection conn = getConnection();
+				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_FEATURE_BY_ID)) {
+			FeatureSet set = new FeatureHashSet();
+			for (int i : dbIds) {
+				st.setInt(1, i);
+				ResultSet rs = st.executeQuery();
+				if (rs.next()) {
+					set.add(new FeatureH2(rs.getInt(6), rs.getString(2), rs.getString(3),
+							H2Queries.toFeatureLevel(rs.getInt(4)), rs.getBoolean(5)));
+				}else{
+					l.warn("Cannot find feature id: {}", i);
+				}
+			}
+			return set;
+		} catch (SQLException e) {
+			l.error("SQL Exception", e.getMessage());
+			throw new IOException(e);
+		}
+	}
+
 	@Override
 	public Map<String, FeatureSet> getFeatures(String bundleId) throws IOException {
-		
+
 		try (Connection conn = getConnection();
 				PreparedStatement st = conn.prepareStatement(H2Queries.SELECT_FEATURES_OF_BUNDLE)) {
 			st.setInt(1, getBundleIdByName(bundleId));
@@ -258,11 +280,11 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 			Map<String, FeatureSet> map = new HashMap<String, FeatureSet>();
 			while (rs.next()) {
 				String portpairId = rs.getString(1);
-				
+
 				if (!map.containsKey(portpairId)) {
 					map.put(portpairId, new FeatureHashSet());
 				}
-				map.get(portpairId).add(new FeatureH2(rs.getInt(7),rs.getString(3), rs.getString(4),
+				map.get(portpairId).add(new FeatureH2(rs.getInt(7), rs.getString(3), rs.getString(4),
 						H2Queries.toFeatureLevel(rs.getInt(5)), rs.getBoolean(6)));
 			}
 			return map;
@@ -274,12 +296,13 @@ public class FeaturesDatabaseH2 extends H2Connected implements FeaturesDatabase 
 
 	public static class FeatureH2 extends FeatureImpl {
 		private int dbId;
+
 		public FeatureH2(int dbId, String string, String string2, FeatureDepth featureLevel, boolean boolean1) {
 			super(string, string2, featureLevel, boolean1);
 			this.dbId = dbId;
 		}
 
-		public int getDbId(){
+		public int getDbId() {
 			return dbId;
 		}
 	}

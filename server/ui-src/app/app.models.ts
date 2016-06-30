@@ -32,7 +32,17 @@ export class Features {
 
     _sortByDepth(a, b){
         let _depths = ['From','To','FromToPorts','OtherPort','Activity','Processor','Workflow'];
-        return _depths.indexOf(a.l) - _depths.indexOf(b.l);
+        let r = _depths.indexOf(a.l) - _depths.indexOf(b.l);
+        if(r==0){
+          if(a.v > b.v){
+            return -1;
+          }else if(a.v < b.v){
+            return 1;
+          }else{
+            return 0;
+          }
+        }
+        return r;
     }
 
     getPortpairs(){
@@ -46,6 +56,42 @@ export class Features {
     getFeatures(portPair: string){
         let fff = this._map[portPair];
         return fff.sort(this._sortByDepth);
+    }
+
+    getGroupedFeatures(portPair:string){
+      let fff = this._map[portPair];
+      let groups = {};
+      for(let i in fff){
+        if(typeof groups[fff[i].n] === 'undefined'){
+          groups[fff[i].n] = new Array<Feature>();
+        }
+        groups[fff[i].n].push(fff[i]);
+      }
+      return groups;
+    }
+
+    getGroups(portPair:string):Array<string>{
+      let fff = this._map[portPair];
+      let groups = new Array<string>();
+      for(let i in fff){
+        if( groups.indexOf(fff[i].n) == -1 ){
+          groups.push(fff[i].n);
+        }
+      }
+      console.log('groups', groups);
+      return groups;
+    }
+
+    getGroup(portPair:string, group:string):Array<Feature>{
+      let feats = new Array<Feature>();
+      let fff = this._map[portPair];
+      for(let i in fff){
+          if(fff[i].n == group){
+            feats.push(fff[i]);
+          }
+      }
+      // console.log(group, feats);
+      return feats;
     }
 }
 

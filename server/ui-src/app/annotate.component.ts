@@ -12,47 +12,69 @@ import {Router,RouteParams} from 'angular2/router';
   <h1>{{portpair.getFrom()}} <span [innerHTML]="portpair.getArrow()"></span> {{portpair.getTo()}}</h1>
 
   <div class="row">
-    <div class="col-lg-6">
-      <span class="pull-left label label-default pull-left">{{elapsedTimeSoFar/1000}}s</span>
-    </div>
-    <div class="col-lg-6">
-      <div class="pull-right">
+    <div class="col-lg-12 text-center">
+      <div class="btn-group">
         <button type="button" [disabled]="noSelected()" class="btn btn-danger" (click)="saveData()">Annotate!</button>
         <button type="button" [disabled]="hasSelected()" class="btn btn-warning" (click)="saveIgnore()">Ignore.</button>
         <button type="button" class="btn btn-default" (click)="saveSkipped()">Later.</button>
       </div>
     </div>
   </div>
-<hr/>
-  <div class="row">
-    <div class="col-lg-4">
-      <h6>Image</h6>
-      <img class="img-rounded img-responsive" (click)="'/service/myexperiments/image/'+bundle" src="/service/myexperiments/image/{{bundle}}">
+  <hr/>
+  <div class="row boxes1">
+    <div class="col-lg-6 details">
+      <h5>Port mapping:</h5>
+      <p><b>Processor</b>: {{portpair.getProcessor()}}</p>
+      <p><b>From</b>: {{portpair.getFrom()}}</p>
+      <p><b>To</b>: {{portpair.getTo()}}</p>
     </div>
-    <features-list  class="col-lg-4" *ngIf="portpair" [portpair]="portpair"></features-list>
-    <recommendations-list class="col-lg-4" *ngIf="rules" [rules]="rules" [annotator]="annotator" [datanode]="datanode"></recommendations-list>
+    <div class="col-lg-6 picture" >
+      <h5>Image</h5>
+      <a [click]="'/service/myexperiments/image/'+bundle" target="_image">
+      <img class="img-rounded img-responsive" src="/service/myexperiments/image/{{bundle}}">
+      </a>
+    </div>
   </div>
-<hr/>
-    <div class="row">
-      <div class="col-lg-6">
-        <span class="label label-default pull-left">{{elapsedTimeSoFar}}</span>
-      </div>
-      <div>
-        <div class="pull-right">
-          <button type="button" [disabled]="noSelected()" class="btn btn-danger" (click)="saveData()">Annotate!</button>
-          <button type="button" [disabled]="hasSelected()" class="btn btn-warning" (click)="saveIgnore()">Ignore.</button>
-          <button type="button" class="btn btn-default" (click)="saveSkipped()">Later.</button>
-        </div>
+ <div class="row boxes2">
+    <features-list class="featlist col-lg-6" *ngIf="portpair" [portpair]="portpair"></features-list>
+    <recommendations-list class="reclist col-lg-6" *ngIf="rules" [rules]="rules" [annotator]="annotator" [datanode]="datanode"></recommendations-list>
+ </div>
+ <hr/>
+  <div class="row">
+    <div class="col-lg-12 text-center">
+      <div class="btn-group">
+        <button type="button" [disabled]="noSelected()" class="btn btn-danger" (click)="saveData()">Annotate!</button>
+        <button type="button" [disabled]="hasSelected()" class="btn btn-warning" (click)="saveIgnore()">Ignore.</button>
+        <button type="button" class="btn btn-default" (click)="saveSkipped()">Later.</button>
       </div>
     </div>
+  </div>
 </div>
-
     `,
     providers: [DatanodeService, AnnotateService],
-    directives: [FeaturesList,RecommendationsList],
+    directives: [FeaturesList, RecommendationsList],
     styles: [`
+      .boxes1 {
+        background-color: rgba(224,255,255,1);
+      }
+      .boxes2 {
+        background-color: rgba(255,228,225,0.2);
+      }
       .annotate-view {
         padding-bottom: 5em;
+      }
+      .details{
+        background-color: rgba(152,251,152,0.5);
+      }
+      .picture{
+        padding:0.5em;
+        background-color: rgba(255,160,122,0.5);
+      }
+      .reclist{
+        background-color: rgba(102,51,153,0.2);
+      }
+      .featlist
+        background-color: rgba(255,218,185,1);
       }
       `]
 })
@@ -126,7 +148,7 @@ export class AnnotateComponent implements Annotator
     }
 
     ngOnDestroy(){
-      console.log('on destroy');
+      // console.log('on destroy');
       window.clearInterval(this.intervalID);
     }
 

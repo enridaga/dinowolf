@@ -36,7 +36,6 @@ System.register(['angular2/core', './app.models', './logs.service', 'angular2/ro
                 AnnotationsComponent.prototype.ngOnInit = function () {
                     var _this = this;
                     this._logsService.getAnnotations().subscribe(function (annotations) { return _this.annotations = annotations; }, function (error) { return _this.errorMessage = error; });
-                    console.log('annotations', this.annotations);
                 };
                 AnnotationsComponent.prototype.asPortPair = function (pp) {
                     return new app_models_1.Portpair(pp);

@@ -11,7 +11,7 @@ import {Home} from './home.component';
 
 @Component({
     selector: 'app-root',
-    templateUrl: 'tmpl/layout.html',
+    templateUrl: 'tmpl/layout2.html',
     directives: [ROUTER_DIRECTIVES],
     providers: [ROUTER_PROVIDERS]
 })

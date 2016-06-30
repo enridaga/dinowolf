@@ -31,7 +31,6 @@ export class AnnotationsComponent {
       this._logsService.getAnnotations().subscribe(
           annotations => this.annotations = annotations,
           error => this.errorMessage = <any>error);
-          console.log('annotations', this.annotations);
     }
 
     asPortPair(pp:string):Portpair{

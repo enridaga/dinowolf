@@ -13,7 +13,6 @@ export class WorkflowDetailsService {
         let observable = this.http.get('/service/workflow/' + name, options);
         let o = observable
             .map(this.extractWorkflowData);
-
         return o
             .catch(this.handleError);
     }
@@ -26,7 +25,6 @@ export class WorkflowDetailsService {
         if(portpair){
           url += '/' + portpair;
         }
-        console.log('get features: ', url);
         let observable = this.http.get(url, options);
         let o = observable
             .map(this.extractFeaturesData);
@@ -46,7 +44,6 @@ export class WorkflowDetailsService {
     }
 
     private handleError(error: any) {
-        // console.log("Error", error);
         let errMsg = error.message || 'Server error';
         return Observable.throw(errMsg);
     }
@@ -57,7 +54,6 @@ export class WorkflowDetailsService {
         }
         let body = res.json();
         let annotations: Annotations;
-
         if (body) {
             annotations = new Annotations(body);
         }
@@ -87,8 +83,6 @@ export class WorkflowDetailsService {
         if (body) {
             features = new Features(body);
         }
-//        console.log("body",body);
-//        console.log("WF",features);
         return features;
     }
     constructor(public http: Http) { }

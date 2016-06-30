@@ -50,7 +50,6 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
                     if (portpair) {
                         url += '/' + portpair;
                     }
-                    console.log('get features: ', url);
                     var observable = this.http.get(url, options);
                     var o = observable
                         .map(this.extractFeaturesData);
@@ -68,7 +67,6 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
                         .catch(this.handleError);
                 };
                 WorkflowDetailsService.prototype.handleError = function (error) {
-                    // console.log("Error", error);
                     var errMsg = error.message || 'Server error';
                     return Rx_1.Observable.throw(errMsg);
                 };
@@ -103,8 +101,6 @@ System.register(['angular2/core', 'rxjs/Rx', './app.models', 'angular2/http'], f
                     if (body) {
                         features = new app_models_1.Features(body);
                     }
-                    //        console.log("body",body);
-                    //        console.log("WF",features);
                     return features;
                 };
                 WorkflowDetailsService = __decorate([

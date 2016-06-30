@@ -242,4 +242,9 @@ class DatabaseManagerImpl implements DatabaseManager {
 	public Map<String, List<String>> bundleAnnotations(String bundleId) throws IOException {
 		return annotations.bundleAnnotations(bundleId);
 	}
+	
+	@Override
+	public FeatureSet getFeatures(Integer[] dbIds) throws IOException {
+		return features.getFeatures(dbIds);
+	}
 }

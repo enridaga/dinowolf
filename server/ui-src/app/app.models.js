@@ -60,7 +60,19 @@ System.register([], function(exports_1, context_1) {
                 }
                 Features.prototype._sortByDepth = function (a, b) {
                     var _depths = ['From', 'To', 'FromToPorts', 'OtherPort', 'Activity', 'Processor', 'Workflow'];
-                    return _depths.indexOf(a.l) - _depths.indexOf(b.l);
+                    var r = _depths.indexOf(a.l) - _depths.indexOf(b.l);
+                    if (r == 0) {
+                        if (a.v > b.v) {
+                            return -1;
+                        }
+                        else if (a.v < b.v) {
+                            return 1;
+                        }
+                        else {
+                            return 0;
+                        }
+                    }
+                    return r;
                 };
                 Features.prototype.getPortpairs = function () {
                     var pairs = new Array();
@@ -72,6 +84,39 @@ System.register([], function(exports_1, context_1) {
                 Features.prototype.getFeatures = function (portPair) {
                     var fff = this._map[portPair];
                     return fff.sort(this._sortByDepth);
+                };
+                Features.prototype.getGroupedFeatures = function (portPair) {
+                    var fff = this._map[portPair];
+                    var groups = {};
+                    for (var i in fff) {
+                        if (typeof groups[fff[i].n] === 'undefined') {
+                            groups[fff[i].n] = new Array();
+                        }
+                        groups[fff[i].n].push(fff[i]);
+                    }
+                    return groups;
+                };
+                Features.prototype.getGroups = function (portPair) {
+                    var fff = this._map[portPair];
+                    var groups = new Array();
+                    for (var i in fff) {
+                        if (groups.indexOf(fff[i].n) == -1) {
+                            groups.push(fff[i].n);
+                        }
+                    }
+                    console.log('groups', groups);
+                    return groups;
+                };
+                Features.prototype.getGroup = function (portPair, group) {
+                    var feats = new Array();
+                    var fff = this._map[portPair];
+                    for (var i in fff) {
+                        if (fff[i].n == group) {
+                            feats.push(fff[i]);
+                        }
+                    }
+                    // console.log(group, feats);
+                    return feats;
                 };
                 return Features;
             }());

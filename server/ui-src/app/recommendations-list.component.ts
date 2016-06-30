@@ -7,7 +7,7 @@ import {Rule,Datanode, Annotator} from './app.models';
 @Component({
     selector: 'recommendations-list',
     template: `
-    <h6>Recommendations</h6>
+    <h5>Annotations</h5>
     <div *ngIf="rules" #recommendationsList>
       <div *ngFor="#rule of recommended()">
           <datanode-item *ngFor="#item of rule.head" [root]="item" [annotator]="annotator" [datanode]="datanode" [item]="item"></datanode-item>

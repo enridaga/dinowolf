@@ -26,4 +26,6 @@ public interface FeaturesDatabase {
 	public FeatureSet getFeatures(String bundleId, String portPair) throws IOException;
 	
 	public Map<String,FeatureSet> getFeatures(String bundleId) throws IOException;
+
+	public FeatureSet getFeatures(Integer[] dbIds) throws IOException;
 }
