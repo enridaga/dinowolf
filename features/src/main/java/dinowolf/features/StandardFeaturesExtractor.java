@@ -46,7 +46,12 @@ class StandardFeaturesExtractor implements FeaturesExtractor {
 		}
 
 		FeatureHashSet features = new FeatureHashSet();
-
+		// If the workflow contains one processor only, include the textual descriptions of the workflow.
+		if(inOut.workflow().getProcessors().size() == 1){
+			l.debug("Single processor wf. Including workflow annotations.");
+			safeAdd(features, F.WorkflowTitle(anno.getTitle(inOut.workflow())));
+			safeAdd(features, F.WorkflowDescription(anno.getDescription(inOut.workflow())));
+		}
 		// Processor
 		features.add(F.ProcessorType(inOut.processor().getType().toString()));
 		features.add(F.ProcessorName(inOut.processor().getName()));
