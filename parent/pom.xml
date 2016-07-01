@@ -20,6 +20,7 @@
 		<org.eclipse.jetty.version>9.3.0.v20150612</org.eclipse.jetty.version>
 		<org.apache.jena.version>3.0.0</org.apache.jena.version>
 		<org.apache.taverna.version>0.15.1-incubating</org.apache.taverna.version>
+		<github.global.server>github</github.global.server>
 	</properties>
 	<dependencyManagement>
 		<dependencies>

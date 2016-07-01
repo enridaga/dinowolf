@@ -133,7 +133,13 @@
 	</dependencies>
 	<build>
 		<plugins>
-
+			<plugin>
+				<groupId>com.github.github</groupId>
+				<artifactId>site-maven-plugin</artifactId>
+				<configuration>
+					<skip>true</skip>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
@@ -185,6 +191,13 @@
 					</webApp>
 					<jettyXml>src/test/resources/jetty.xml</jettyXml>
 				</configuration>
+			</plugin>
+			<plugin>
+			  <groupId>org.apache.maven.plugins</groupId>
+			  <artifactId>maven-deploy-plugin</artifactId>
+			  <configuration>
+			    <skip>true</skip>
+			  </configuration>
 			</plugin>
 		</plugins>
 		<resources>
