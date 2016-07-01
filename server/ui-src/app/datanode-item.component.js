@@ -49,6 +49,21 @@ System.register(['angular2/core', './app.models'], function(exports_1, context_1
                         this.expanded = !this.expanded;
                     }
                 };
+                DatanodeItem.prototype.comment = function (str) {
+                    if (str) {
+                        // hack I don't know why sometimes datanode is undefined!
+                        if (!this.datanode) {
+                            return str;
+                        }
+                        var i = this.datanode.item(str);
+                        if (i.comment) {
+                            return i.comment;
+                        }
+                        else {
+                            return this.label(str);
+                        }
+                    }
+                };
                 DatanodeItem.prototype.label = function (str) {
                     if (str) {
                         // hack I don't know why sometimes datanode is undefined!
@@ -85,8 +100,8 @@ System.register(['angular2/core', './app.models'], function(exports_1, context_1
                         selector: 'datanode-item',
                         providers: [],
                         directives: [DatanodeItem],
-                        template: "\n    <div class=\"dn-item\">\n      <p [class.selected]=\"annotator.selections[item]\">\n        <input\n          type=\"checkbox\"\n          *ngIf=\"annotator\"\n          [ngModel]=\"annotator.selections[item]\"\n          (change)=\"annotator.selection(item, cv.checked) ; annotator.selection(root, cv.checked)\"\n          #cv />\n        {{label(item)}}\n        <a class=\"btn btn-xs btn-default\" *ngIf=\"item && (datanodeChildren().length > 0)\" (click)=\"toggleExpanded()\"><i class=\"fa\" [ngClass]=\"{'fa-plus': !expanded,'fa-minus': expanded}\"></i></a>\n      </p>\n      <ul *ngIf=\"expanded\">\n        <li *ngFor=\"#child of datanodeChildren()\">\n          <datanode-item [annotator]=\"annotator\" [root]=\"root\" [datanode]=\"datanode\" *ngIf=\"child\" [item]=\"child\"></datanode-item>\n        </li>\n      </ul>\n    </div>\n  ",
-                        styles: ["\n    .dn-item ul {\n      margin-left: 2em;\n    }\n    .dn-item p.selected {\n      \n    }\n    .dn-item a {\n      cursor: pointer;\n      display: inline;\n    }\n    .nd-item ul li {\n\n    }\n  "]
+                        template: "\n    <div class=\"dn-item\">\n      <p [class.selected]=\"annotator.selections[item]\"\n      [title]=\"comment(item)\">\n        <input\n          type=\"checkbox\"\n          *ngIf=\"annotator\"\n          [ngModel]=\"annotator.selections[item]\"\n          (change)=\"annotator.selection(item, cv.checked) ; annotator.selection(root, cv.checked)\"\n          #cv />\n        {{label(item)}}\n        <a class=\"btn btn-xs btn-default\" *ngIf=\"item && (datanodeChildren().length > 0)\" (click)=\"toggleExpanded()\"><i class=\"fa\" [ngClass]=\"{'fa-plus': !expanded,'fa-minus': expanded}\"></i></a>\n      </p>\n      <ul *ngIf=\"expanded\">\n        <li *ngFor=\"#child of datanodeChildren()\">\n          <datanode-item [annotator]=\"annotator\" [root]=\"root\" [datanode]=\"datanode\" *ngIf=\"child\" [item]=\"child\"></datanode-item>\n        </li>\n      </ul>\n    </div>\n  ",
+                        styles: ["\n    .dn-item ul {\n      margin-left: 2em;\n    }\n    .dn-item p {\n      cursor: default;\n    }\n    .dn-item a {\n      cursor: pointer;\n      display: inline;\n    }\n    .nd-item ul li {\n\n    }\n  "]
                     }), 
                     __metadata('design:paramtypes', [])
                 ], DatanodeItem);

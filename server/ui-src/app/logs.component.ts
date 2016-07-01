@@ -19,6 +19,8 @@ import {Router,RouteParams} from 'angular2/router';
           <th>From recommandations</th>
           <th>AVG Rank</th>
           <th>AVG Relevance</th>
+          <th>AVG Support</th>
+          <th>AVG Confidence</th>
         </tr>
       </thead>
       <tbody>
@@ -32,6 +34,8 @@ import {Router,RouteParams} from 'angular2/router';
           <td>{{log.fromrec}}/{{log.count}}</td>
           <td>{{log.avgrank}}</td>
           <td>{{log.avgrel}}</td>
+          <td>{{log.avgsupport}}</td>
+          <td>{{log.avgconfidence}}</td>
         </tr>
       </tbody>
     </table>

@@ -89,7 +89,7 @@ public class AnnotationsResource extends AbstractResource {
 					@Override
 					public boolean read(String bundleId, String portPairName, List<String> annotations, List<Rule> rules,
 							AnnotationAction action, int logId, int annotationsCount, int duration, int fromrec,
-							double avgrank, double avgrel) throws IOException {
+							double avgrank, double avgrel, double avgconfidence, double avgsupport) throws IOException {
 						if (first) {
 							first = false;
 						} else {
@@ -105,6 +105,8 @@ public class AnnotationsResource extends AbstractResource {
 						o.addProperty("fromrec", fromrec);
 						o.addProperty("avgrank", avgrank);
 						o.addProperty("avgrel", avgrel);
+						o.addProperty("avgconfidence", avgconfidence);
+						o.addProperty("avgsupport", avgsupport);
 						JsonArray a = new JsonArray();
 						for (String s : annotations){
 							a.add(s);

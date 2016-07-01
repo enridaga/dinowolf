@@ -8,10 +8,10 @@
 	</Appenders>
 	<Loggers>
 		<Logger name="org.apache.log4j.xml" level="info" />
-		<Logger name="dinowolf" level="info" />
+		<Logger name="dinowolf" level="error" />
 		<Logger name="colatti" level="info" />
-		<Logger name="dinowolf.database" level="trace" />
-		<Root level="info">
+		<Logger name="dinowolf.database" level="info" />
+		<Root level="error">
 			<AppenderRef ref="STDOUT" />
 		</Root>
 	</Loggers>

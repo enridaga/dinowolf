@@ -9,7 +9,8 @@ import { AnnotateService } from './annotate.service';
   directives: [ DatanodeItem ],
   template: `
     <div class="dn-item">
-      <p [class.selected]="annotator.selections[item]">
+      <p [class.selected]="annotator.selections[item]"
+      [title]="comment(item)">
         <input
           type="checkbox"
           *ngIf="annotator"
@@ -30,8 +31,8 @@ import { AnnotateService } from './annotate.service';
     .dn-item ul {
       margin-left: 2em;
     }
-    .dn-item p.selected {
-      
+    .dn-item p {
+      cursor: default;
     }
     .dn-item a {
       cursor: pointer;
@@ -77,6 +78,20 @@ export class DatanodeItem {
     }
   }
 
+  comment(str){
+    if(str){
+      // hack I don't know why sometimes datanode is undefined!
+      if(!this.datanode){
+        return str;
+      }
+      let i = this.datanode.item(str);
+      if(i.comment){
+        return i.comment;
+      }else{
+        return this.label(str);
+      }
+    }
+  }
   label(str){
     if(str){
       // hack I don't know why sometimes datanode is undefined!

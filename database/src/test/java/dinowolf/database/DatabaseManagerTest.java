@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.taverna.scufl2.api.container.WorkflowBundle;
@@ -20,6 +21,7 @@ import org.slf4j.LoggerFactory;
 
 import dinowolf.annotation.FromTo;
 import dinowolf.annotation.FromTo.FromToType;
+import dinowolf.database.h2.AnnotationsLoggerH2;
 import dinowolf.features.FeatureSet;
 import dinowolf.features.FeaturesMap;
 import dinowolf.features.FeaturesMapExtractor;
@@ -75,7 +77,8 @@ public class DatabaseManagerTest {
 			WorkflowBundle b = manager.get(bundleId);
 			FeaturesMap map = manager.getFeatures(bundleId, b);
 			for (Entry<FromTo, FeatureSet> pair : map.entrySet()) {
-				manager.annotate(bundleId, pair.getKey().getId(), Arrays.asList(annotation), Collections.emptyList(), 1);
+				manager.annotate(bundleId, pair.getKey().getId(), Arrays.asList(annotation), Collections.emptyList(),
+						1);
 			}
 		}
 
@@ -88,5 +91,45 @@ public class DatabaseManagerTest {
 
 	private static final InputStream _f(String name) {
 		return DatabaseManagerTest.class.getClassLoader().getResourceAsStream(name + ".wfbundle");
+	}
+
+	@Test
+	public void ruleSortByRelevanceTest() throws IOException {
+		// for(FromTo)
+		// all IO ports except 3Drec-v1 are dn:hasDerivation
+		String annotation = "hasDerivation";
+
+		for (String bundle : testBundles) {
+			if (bundle.equals("3Drec-v1"))
+				continue;
+
+			String bundleId = bundle;
+			WorkflowBundle b = manager.get(bundleId);
+			FeaturesMap map = manager.getFeatures(bundleId, b);
+			for (Entry<FromTo, FeatureSet> pair : map.entrySet()) {
+				manager.annotate(bundleId, pair.getKey().getId(), Arrays.asList(annotation), Collections.emptyList(),1);
+			}
+		}
+
+		WorkflowBundle b = manager.get("3Drec-v1");
+		FeaturesMap map = manager.getFeatures("3Drec-v1", b);
+		
+		for (Entry<FromTo, FeatureSet> pair : map.entrySet()) {
+			List<enridaga.colatti.Rule> rules = manager.recommend("3Drec-v1", pair.getKey().getId());
+			l.info("{} {} rules", pair.getKey().getId(), rules.size());
+			int c = 0;
+			for(enridaga.colatti.Rule r : rules){
+				if(c>10) break;c++;
+				l.info(" ? {}", r);
+			}
+			
+			rules.sort(new AnnotationsLoggerH2.RuleSortByRelevance());
+			c = 0;
+			for(enridaga.colatti.Rule r : rules){
+				if(c>10) break;c++;
+				l.info(" > {}", r);
+			}
+			break;
+		}
 	}
 }

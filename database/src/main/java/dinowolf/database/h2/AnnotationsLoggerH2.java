@@ -10,10 +10,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -56,6 +59,8 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 			conn.setAutoCommit(false);
 			conn.createStatement().execute(H2Queries.CREATE_TABLE_ANNOTATION_UNIT);
 			conn.createStatement().execute(H2Queries.CREATE_TABLE_ANNOTATION_LOG);
+			conn.createStatement().execute(H2Queries.ALTER_TABLE_ANNOTATION_LOG_ADD_COLUMN_AVGCONFIDENCE);
+			conn.createStatement().execute(H2Queries.ALTER_TABLE_ANNOTATION_LOG_ADD_COLUMN_AVGSUPPORT);
 			conn.commit();
 			conn.setAutoCommit(true);
 		} catch (IOException | SQLException e) {
@@ -182,9 +187,13 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 						// duration
 						ins.setInt(6, duration);
 						// fromrec
-						List<String> fromRec = new ArrayList<String>();
+						Set<String> fromRec = new HashSet<String>();
 						List<Integer> ranks = new ArrayList<Integer>();
 						List<Double> rel = new ArrayList<Double>();
+						List<Double> confidence = new ArrayList<Double>();
+						List<Double> support = new ArrayList<Double>();
+						recommended.sort(new RuleSortByRelevance());
+						
 						for(String a: annotations) {
 							int rank = 0;
 							for(Rule r: recommended){
@@ -193,6 +202,8 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 									fromRec.add(a);
 									ranks.add(rank);
 									rel.add(r.relativeConfidence());
+									confidence.add(r.confidence());
+									support.add(r.support());
 								}
 							}
 						}
@@ -210,12 +221,28 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 						}
 						ins.setDouble(9, avgrel);
 						
-						l.trace("_annotate measures: annotations:{}, duration:{}, fromRec:{}, avgrank:{}, avgrel:{}", new Object[] {
+						// avgconfidence
+						Double avgconfidence = 0.0;
+						if(!confidence.isEmpty()){
+							avgconfidence = confidence.stream().mapToDouble(val -> val).average().getAsDouble();
+						}
+						ins.setDouble(10, avgconfidence);
+						
+						// avgsupport
+						Double avgsupport = 0.0;
+						if(!support.isEmpty()){
+							avgsupport = support.stream().mapToDouble(val -> val).average().getAsDouble();
+						}
+						ins.setDouble(11, avgsupport);
+						
+						l.trace("_annotate measures: annotations:{}, duration:{}, fromRec:{}, avgrank:{}, avgrel:{}, avgconfidence: {}, avgsupport: {}", new Object[] {
 								annotations.size(),
 								duration,
 								fromRec,
 								avgrank,
-								avgrel
+								avgrel,
+								avgconfidence,
+								avgsupport
 						});
 						ins.executeUpdate();
 					}
@@ -227,6 +254,27 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 			}
 		} catch (SQLException | IOException e) {
 			throw new IOException(e);
+		}
+	}
+	
+	public static class RuleSortByRelevance implements Comparator<Rule>{
+		@Override
+		public int compare(Rule o1, Rule o2) {
+			// -1 o1 first
+			if(o1.relativeConfidence() > o2.relativeConfidence())
+				return -1;
+			if(o1.relativeConfidence() < o2.relativeConfidence())
+				return 1;
+			if(o1.confidence() > o2.confidence())
+				return -1;
+			if(o1.confidence() < o2.confidence())
+				return 1;
+			if(o1.support() > o2.support())
+				return -1;
+			if(o1.support() < o2.support())
+				return 1;
+			
+			return 0;
 		}
 	}
 
@@ -336,7 +384,9 @@ public class AnnotationsLoggerH2 extends H2Connected implements AnnotationsDatab
 					int fromRec = rs.getInt(9);
 					double avgrank = rs.getDouble(10);
 					double avgrel = rs.getDouble(11);
-					goNext = walker.read(bundleId, portPairName, toStringList(annotations), jsonStringToRules(recommended), H2Queries.toAnnotationAction(action.charAt(0)), logId, count, duration, fromRec, avgrank, avgrel);
+					double avgconfidence = rs.getDouble(12);
+					double avgsupport = rs.getDouble(13);
+					goNext = walker.read(bundleId, portPairName, toStringList(annotations), jsonStringToRules(recommended), H2Queries.toAnnotationAction(action.charAt(0)), logId, count, duration, fromRec, avgrank, avgrel, avgconfidence, avgsupport);
 				}
 			}
 		} catch (SQLException | IOException e) {

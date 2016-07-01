@@ -49,6 +49,9 @@ public class AnnotationsDatabaseH2Test {
 		//
 		conn .createStatement().execute(H2Queries.CREATE_TABLE_ANNOTATION_UNIT);
 		conn .createStatement().execute(H2Queries.CREATE_TABLE_ANNOTATION_LOG);
+		conn .createStatement().execute(H2Queries.ALTER_TABLE_ANNOTATION_LOG_ADD_COLUMN_AVGCONFIDENCE);
+		conn .createStatement().execute(H2Queries.ALTER_TABLE_ANNOTATION_LOG_ADD_COLUMN_AVGSUPPORT);
+		
 		
 		// INSERT FAKE BUNDLES
 		conn.createStatement().executeUpdate("INSERT INTO BUNDLE (FILE) VALUES ('FILE1')");
@@ -140,8 +143,8 @@ public class AnnotationsDatabaseH2Test {
 		database.walk(new LogWalker() {
 			@Override
 			public boolean read(String bundleId, String portPairName, List<String> annotations, List<enridaga.colatti.Rule> recommended,
-					AnnotationAction action, int logId, int count, int duration, int fromrec, double avgrank, double avgrel) throws IOException {
-				l.info("{} {} {} {} {} {} {} {} {} {} {}", new Object[]{bundleId, portPairName, annotations, recommended, action, logId, count, duration, fromrec, avgrank, avgrel});
+					AnnotationAction action, int logId, int count, int duration, int fromrec, double avgrank, double avgrel, double avgconfidence, double avgsupport) throws IOException {
+				l.info("{} {} {} {} {} {} {} {} {} {} {}", new Object[]{bundleId, portPairName, annotations, recommended, action, logId, count, duration, fromrec, avgrank, avgrel, avgconfidence, avgsupport});
 				tester.add(bundleId);
 				return true;
 			}
@@ -189,8 +192,8 @@ public class AnnotationsDatabaseH2Test {
 		database.walk(new LogWalker() {
 			@Override
 			public boolean read(String bundleId, String portPairName, List<String> annotations, List<enridaga.colatti.Rule> recommended,
-					AnnotationAction action, int logId, int count, int duration, int fromrec, double avgrank, double avgrel) throws IOException {
-				l.info("{} {} {} {} {} {} {} {} {} {} {}", new Object[]{bundleId, portPairName, annotations, recommended, action, logId, count, duration, fromrec, avgrank, avgrel});
+					AnnotationAction action, int logId, int count, int duration, int fromrec, double avgrank, double avgrel, double avgconfidence, double avgsupport) throws IOException {
+				l.info("{} {} {} {} {} {} {} {} {} {} {} {} {}", new Object[]{bundleId, portPairName, annotations, recommended, action, logId, count, duration, fromrec, avgrank, avgrel, avgconfidence, avgsupport});
 				
 				return true;
 			}

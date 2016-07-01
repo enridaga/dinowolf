@@ -8,5 +8,5 @@ import enridaga.colatti.Rule;
 
 public interface LogWalker {
 
-	boolean read(String bundleId, String portPairName, List<String> annotations, List<Rule> list, AnnotationAction action, int logId, int annotationsCount, int duration, int fromrec, double avgrank, double avgrel) throws IOException;
+	boolean read(String bundleId, String portPairName, List<String> annotations, List<Rule> list, AnnotationAction action, int logId, int annotationsCount, int duration, int fromrec, double avgrank, double avgrel, double avgconfidence, double avgsupport) throws IOException;
 }
