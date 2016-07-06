@@ -136,7 +136,23 @@ export class Annotations {
         for(var p in this._map){
             pairs.push(new Portpair(p));
         }
-        return pairs.sort();
+        return pairs.sort(function(a:Portpair,b:Portpair):number{
+          let ret:number;
+          ret=a.getBundle().localeCompare(b.getBundle());
+          if(ret==0){
+            ret=a.getWorkflow().localeCompare(b.getWorkflow());
+          }
+          if(ret==0){
+            ret=a.getProcessor().localeCompare(b.getProcessor());
+          }
+          if(ret==0){
+            ret=a.getFrom().localeCompare(b.getFrom());
+          }
+          if(ret==0){
+            ret=a.getTo().localeCompare(b.getTo());
+          }
+          return ret;
+        });
     }
 
     getAnnotations(portPair: Portpair) : Array<string>{
