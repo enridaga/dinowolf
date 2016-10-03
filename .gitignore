@@ -9,3 +9,4 @@
 **/dependency-reduced-pom.xml
 **/node_modules/
 **/dinowolf-http-cache*
+**/*.csv
