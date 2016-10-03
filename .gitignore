@@ -10,3 +10,5 @@
 **/node_modules/
 **/dinowolf-http-cache*
 **/*.csv
+server/dist/**
+server/dinowolf-dist*
